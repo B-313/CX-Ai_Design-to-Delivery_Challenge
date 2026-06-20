@@ -1,0 +1,44 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Alternate package manager lockfiles (this project uses npm)
+bun.lock
+bun.lockb
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary local extraction artifacts
+.tmp_slides.zip
+.tmp_slides_extract/
+
+# Python cache artifacts
+__pycache__/
+*.pyc
+
+# Supabase CLI temp artifacts
+supabase/.temp/

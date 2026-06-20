@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design-to-Delivery Accelerator · CXI+AI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════ TOKENS ═══════════════ */
+:root {
+  --pf-blue:  #0093D0;
+  --pf-dark:  #003087;
+  --pf-deep:  #001A4D;
+  --pf-sky:   #D6EEF9;
+  --pf-mist:  #EBF6FC;
+  --white:    #FFFFFF;
+  --g25:      #F8FAFC;
+  --g50:      #F2F6FA;
+  --g100:     #E6EDF5;
+  --g200:     #D0DCE9;
+  --g300:     #AABCCE;
+  --g400:     #7494AE;
+  --g600:     #3D5E78;
+  --g800:     #1A2E40;
+  --text:     #0F1E2D;
+  --soft:     #3A5570;
+  --muted:    #6B8EA8;
+  --green:    #00875A;
+  --green-lt: #E0F5ED;
+  --amber:    #A05C00;
+  --amber-lt: #FEF3D8;
+  --red:      #B91C1C;
+  --red-lt:   #FDEDED;
+  --font:     'DM Sans', sans-serif;
+  --serif:    'DM Serif Display', serif;
+  --sh-sm:    0 2px 8px rgba(0,48,135,.07);
+  --sh-md:    0 6px 24px rgba(0,48,135,.11);
+  --sh-lg:    0 16px 48px rgba(0,48,135,.15);
+  --r:        10px;
+  --r-sm:     6px;
+  --r-lg:     16px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--font);font-size:14px;color:var(--text);background:var(--g50)}
+body{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--g200);border-radius:99px}
+*:focus-visible{outline:2px solid var(--pf-blue);outline-offset:2px}
+
+/* ═══════════════ HEADER ═══════════════ */
+.hdr{
+  height:52px;flex-shrink:0;
+  background:linear-gradient(90deg,var(--pf-deep) 0%,var(--pf-dark) 55%,var(--pf-blue) 100%);
+  display:flex;align-items:center;padding:0 20px;gap:14px;
+  box-shadow:0 2px 10px rgba(0,26,77,.3);z-index:300;
+}
+.hdr-logo{font-family:var(--serif);font-size:19px;color:#fff;letter-spacing:.02em}
+.hdr-sep{width:1px;height:18px;background:rgba(255,255,255,.25)}
+.hdr-app{font-size:12px;font-weight:500;color:rgba(255,255,255,.8);letter-spacing:.03em}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.hdr-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;color:rgba(255,255,255,.9)}
+.hdr-user{display:none;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 11px 4px 5px}
+.hdr-user.on{display:flex}
+.hdr-av{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.25);color:#fff;font:700 10px var(--font);display:flex;align-items:center;justify-content:center}
+.hdr-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.9)}
+
+/* ═══════════════ TOP PROJECT BAR ═══════════════ */
+/* Shows project details, NOT section names */
+.proj-bar{
+  height:46px;flex-shrink:0;
+  background:var(--white);border-bottom:1px solid var(--g200);
+  display:flex;align-items:center;padding:0 20px;gap:6px;
+  box-shadow:var(--sh-sm);overflow-x:auto;
+}
+.proj-bar::-webkit-scrollbar{display:none}
+.proj-field{
+  display:flex;align-items:center;gap:5px;
+  padding:4px 12px;background:var(--g50);
+  border:1px solid var(--g100);border-radius:20px;
+  font-size:11px;white-space:nowrap;flex-shrink:0;
+}
+.pf-lbl{font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-size:10px}
+.pf-val{font-weight:600;color:var(--pf-dark)}
+.proj-bar-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0;padding-left:12px}
+.prog-wrap{display:flex;align-items:center;gap:6px}
+.prog-track{width:100px;height:7px;background:var(--g100);border-radius:99px;overflow:hidden;border:1px solid var(--g200)}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#DC2626 0%,#F59E0B 33%,#84CC16 66%,#059669 100%);background-size:300px;transition:width .5s ease}
+.prog-pct{font:700 12px var(--font);color:var(--pf-dark);white-space:nowrap}
+
+/* ═══════════════ WORKSPACE ═══════════════ */
+.ws{flex:1;display:flex;overflow:hidden}
+
+/* ═══════════════ LEFT SIDEBAR ═══════════════ */
+.lsb{
+  width:220px;flex-shrink:0;
+  background:var(--white);border-right:1px solid var(--g200);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.lsb-user{padding:14px 14px 12px;border-bottom:1px solid var(--g100);display:none}
+.lsb-user.on{display:block}
+.lsb-name{font-family:var(--serif);font-size:15px;color:var(--pf-dark);margin-bottom:2px}
+.lsb-meta{font-size:11px;color:var(--muted);line-height:1.55}
+
+.lsb-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.nav-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--g300);padding:0 6px;margin-bottom:6px}
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;border-radius:var(--r-sm);
+  font-size:13px;font-weight:500;color:var(--muted);
+  cursor:pointer;transition:all .15s;margin-bottom:2px;position:relative;user-select:none;
+}
+.nav-item:hover{background:var(--g50);color:var(--text)}
+.nav-item.active{background:var(--pf-mist);color:var(--pf-dark);font-weight:600}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 2px 2px 0;background:var(--pf-blue)}
+.nav-item.locked{opacity:.4;cursor:not-allowed;pointer-events:none}
+.nav-item.done .nnum{background:var(--green);border-color:var(--green);color:#fff}
+.nav-item.active .nnum{background:var(--pf-blue);border-color:var(--pf-blue);color:#fff}
+.nnum{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+
+/* LOCKED / SUBMITTED state */
+.lsb-locked{
+  display:none;
+  background:var(--pf-mist);border-top:1px solid var(--pf-sky);
+  padding:16px 14px;
+}
+.lsb-locked.on{display:block}
+.ll-title{font:700 12px var(--font);color:var(--pf-dark);margin-bottom:5px}
+.ll-body{font-size:11px;color:var(--soft);line-height:1.6}
+.ll-email{font-size:11px;font-weight:700;color:var(--pf-blue);margin-top:4px;word-break:break-all}
+
+.lsb-bot{padding:12px 14px;border-top:1px solid var(--g100);flex-shrink:0}
+.save-btn{width:100%;background:none;border:1.5px solid var(--g200);border-radius:var(--r-sm);padding:7px;font:600 12px var(--font);color:var(--g600);cursor:pointer;transition:all .2s}
+.save-btn:hover{border-color:var(--pf-blue);color:var(--pf-blue);background:var(--pf-mist)}
+.save-ts{font-size:10px;color:var(--g300);text-align:center;margin-top:5px}
+
+/* ═══════════════ CENTER ═══════════════ */
+.center{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* Context bar (prelim summary) */
+.ctx{
+  display:none;height:38px;flex-shrink:0;
+  background:var(--pf-mist);border-bottom:1px solid var(--pf-sky);
+  align-items:center;padding:0 20px;gap:6px;
+}
+.ctx.on{display:flex}
+.ctx-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--pf-dark);margin-right:2px}
+.ctx-pill{background:var(--white);border:1px solid var(--pf-sky);border-radius:20px;padding:2px 9px;font-size:11px;font-weight:600;color:var(--pf-dark)}
+
+/* Panels */
+.panel{display:none;flex:1;flex-direction:column;overflow:hidden;animation:fadeUp .25s ease}
+.panel.on{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════ RIGHT COLUMN ═══════════════ */
+.rsb{width:272px;flex-shrink:0;background:var(--white);border-left:1px solid var(--g200);display:flex;flex-direction:column;overflow:hidden}
+.rtabs{display:flex;border-bottom:1px solid var(--g100);flex-shrink:0}
+.rtab{flex:1;padding:10px 6px;font-size:11px;font-weight:700;text-align:center;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.04em;text-transform:uppercase;transition:all .18s}
+.rtab:hover{color:var(--pf-blue)}
+.rtab.on{color:var(--pf-dark);border-bottom-color:var(--pf-blue)}
+.rpanel{display:none;flex:1;flex-direction:column;overflow:hidden}
+.rpanel.on{display:flex}
+
+/* Prompt panel */
+.prompt-area{padding:14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.rc-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--g300);margin-bottom:2px}
+.prompt-box{background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--r);padding:10px 12px;display:flex;flex-direction:column;gap:8px;transition:all .2s}
+.prompt-box:focus-within{border-color:var(--pf-blue);background:var(--white);box-shadow:0 0 0 3px rgba(0,147,208,.1)}
+#promptTa{border:none;outline:none;background:none;font:400 13px var(--font);color:var(--text);resize:none;min-height:72px;max-height:130px;line-height:1.6}
+#promptTa::placeholder{color:var(--g300)}
+.prompt-send{align-self:flex-end;background:var(--pf-blue);color:#fff;border:none;border-radius:var(--r-sm);padding:6px 14px;font:600 12px var(--font);cursor:pointer;transition:all .2s}
+.prompt-send:hover{background:var(--pf-dark)}
+.prompt-send:disabled{background:var(--g200);cursor:not-allowed}
+.bv-list{flex:1;overflow-y:auto;padding:0 14px 14px}
+.bv-item{background:var(--g50);border:1px solid var(--g100);border-radius:var(--r-sm);padding:8px 10px;margin-bottom:6px;cursor:pointer;font-size:12px;color:var(--soft);transition:all .18s}
+.bv-item:hover{border-color:var(--pf-blue);background:var(--pf-mist)}
+.bv-time{font-size:10px;font-weight:700;color:var(--g300);margin-bottom:2px}
+
+/* Upload / Docs panel */
+.upload-area{padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1}
+.drop-zone{
+  border:2px dashed var(--g200);border-radius:var(--r);padding:22px 16px;
+  text-align:center;cursor:pointer;transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--pf-blue);background:var(--pf-mist)}
+.dz-icon{font-size:28px;opacity:.5}
+.dz-text{font-size:12px;color:var(--muted);line-height:1.5}
+.dz-text strong{color:var(--pf-blue);font-weight:600}
+.dz-types{font-size:10px;color:var(--g300)}
+
+.file-card{
+  background:var(--g25);border:1px solid var(--g100);border-radius:var(--r-sm);
+  padding:10px 12px;animation:fadeUp .2s ease;
+}
+.fc-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+.fc-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.fc-name{font-size:12px;font-weight:700;color:var(--text);word-break:break-all;line-height:1.3}
+.fc-size{font-size:10px;color:var(--g300);margin-top:2px}
+.fc-del{margin-left:auto;background:none;border:none;color:var(--g300);cursor:pointer;font-size:15px;padding:0 2px;transition:color .18s;flex-shrink:0}
+.fc-del:hover{color:var(--red)}
+.fc-field{margin-bottom:6px}
+.fc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--g300);margin-bottom:3px}
+.fc-input{width:100%;border:1.5px solid var(--g200);border-radius:var(--r-sm);padding:5px 8px;font:400 12px var(--font);color:var(--text);background:var(--white);outline:none;transition:border-color .2s}
+.fc-input:focus{border-color:var(--pf-blue)}
+.fc-input.ta{resize:vertical;min-height:44px;line-height:1.5}
+
+/* AI Recommendations panel (review tab) */
+.rec-panel{flex:1;overflow-y:auto;padding:12px}
+.rec-panel::-webkit-scrollbar{width:3px}
+.rec-panel::-webkit-scrollbar-thumb{background:var(--g200);border-radius:99px}
+.rec-item{
+  background:var(--g25);border:1px solid var(--g100);
+  border-radius:var(--r-sm);padding:11px 13px;margin-bottom:8px;
+  animation:fadeUp .2s ease;transition:border-color .2s;
+}
+.rec-item.high{border-left:3px solid var(--red)}
+.rec-item.medium{border-left:3px solid var(--amber)}
+.rec-item.low{border-left:3px solid var(--pf-blue)}
+.rec-item.approved{border-left:3px solid var(--green);opacity:.6}
+.rec-item.declined{opacity:.4;text-decoration-color:var(--muted)}
+.ri-top{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.ri-sev{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;padding:2px 7px;border-radius:20px}
+.sev-high{background:var(--red-lt);color:var(--red)}
+.sev-medium{background:var(--amber-lt);color:var(--amber)}
+.sev-low{background:var(--pf-mist);color:var(--pf-blue)}
+.ri-field{font-size:11px;font-weight:700;color:var(--text);flex:1}
+.ri-issue{font-size:12px;color:var(--soft);line-height:1.5;margin-bottom:6px}
+.ri-fix{font-size:12px;color:var(--green);font-weight:600;line-height:1.5;margin-bottom:8px}
+.ri-fix::before{content:'Fix: '}
+.ri-actions{display:flex;gap:6px}
+.ri-accept{background:var(--green);color:#fff;border:none;border-radius:var(--r-sm);padding:5px 12px;font:700 11px var(--font);cursor:pointer;transition:all .18s;flex:1}
+.ri-accept:hover{background:#006644}
+.ri-decline{background:none;border:1.5px solid var(--g200);border-radius:var(--r-sm);padding:5px 12px;font:600 11px var(--font);color:var(--muted);cursor:pointer;transition:all .18s;flex:1}
+.ri-decline:hover{border-color:var(--g300);color:var(--text)}
+.ri-status{font-size:11px;font-weight:700;text-align:center;padding:4px}
+.ri-status.ok{color:var(--green)}
+.ri-status.no{color:var(--muted)}
+.rec-empty{font-size:12px;color:var(--muted);text-align:center;padding:24px 12px;line-height:1.6}
+
+/* Notes panel */
+.notes-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#notepad{flex:1;border:none;outline:none;resize:none;padding:14px;font:400 13px var(--font);color:var(--text);line-height:1.7;background:var(--g25)}
+.notes-foot{padding:6px 12px;border-top:1px solid var(--g100);display:flex;justify-content:space-between;align-items:center}
+.notes-cnt{font-size:10px;color:var(--g300)}
+.notes-cp{background:none;border:1px solid var(--g200);border-radius:4px;padding:3px 8px;font:600 10px var(--font);color:var(--g400);cursor:pointer;transition:all .18s}
+.notes-cp:hover{border-color:var(--pf-blue);color:var(--pf-blue)}
+
+/* ═══════════════ PANEL 0: REGISTER ═══════════════ */
+#p-reg{align-items:center;justify-content:center;overflow-y:auto;background:radial-gradient(ellipse at 60% 0%,var(--pf-mist) 0%,var(--g50) 55%)}
+.reg-card{background:var(--white);border:1px solid var(--g200);border-radius:20px;box-shadow:var(--sh-lg);padding:36px 42px;width:480px;max-width:94vw}
+.reg-title{font-family:var(--serif);font-size:24px;color:var(--pf-dark);margin-bottom:5px}
+.reg-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.fg{margin-bottom:14px}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fl{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--g600);margin-bottom:4px}
+.fi{width:100%;background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--r-sm);padding:8px 11px;font:400 13.5px var(--font);color:var(--text);outline:none;transition:all .18s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5' fill='none' stroke='%236B8EA8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:26px}
+input.fi{background-image:none;padding-right:11px}
+.fi:focus{border-color:var(--pf-blue);background-color:var(--white);box-shadow:0 0 0 3px rgba(0,147,208,.1)}
+.phone-row{display:flex;gap:8px}
+.phone-code{width:108px;flex-shrink:0}
+.btn-go{width:100%;margin-top:4px;background:linear-gradient(135deg,var(--pf-blue),var(--pf-dark));color:#fff;border:none;border-radius:var(--r-sm);padding:12px;font:700 14px var(--font);cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(0,147,208,.32)}
+.btn-go:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,147,208,.42)}
+.load-link{display:block;text-align:center;margin-top:10px;font-size:12px;color:var(--pf-blue);cursor:pointer}
+.load-link:hover{text-decoration:underline}
+
+/* ═══════════════ PANEL 1: PRELIMINARY ═══════════════ */
+#p-pre{overflow-y:auto;padding:28px 32px;gap:18px}
+.pre-title{font-family:var(--serif);font-size:21px;color:var(--pf-dark)}
+.pre-sub{font-size:13px;color:var(--muted)}
+.pre-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pre-card{background:var(--white);border:1.5px solid var(--g100);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh-sm)}
+.pc-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--g300);margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:5px 13px;border-radius:20px;border:1.5px solid var(--g200);background:var(--g50);font:500 12px var(--font);color:var(--g600);cursor:pointer;transition:all .18s;user-select:none}
+.chip:hover{border-color:var(--pf-blue);color:var(--pf-blue);background:var(--pf-mist)}
+.chip.on{background:var(--pf-blue);border-color:var(--pf-blue);color:#fff;box-shadow:0 2px 6px rgba(0,147,208,.3)}
+.pre-actions{display:flex;justify-content:flex-end}
+.btn-confirm{background:linear-gradient(135deg,var(--pf-blue),var(--pf-dark));color:#fff;border:none;border-radius:var(--r-sm);padding:9px 24px;font:700 13px var(--font);cursor:pointer;transition:all .2s;box-shadow:0 3px 10px rgba(0,147,208,.3)}
+.btn-confirm:hover{transform:translateY(-1px)}
+.btn-confirm:disabled{background:var(--g200);box-shadow:none;cursor:not-allowed;transform:none}
+
+/* ═══════════════ PANEL 2: BRIEF EDITOR ═══════════════ */
+#p-brief{overflow:hidden}
+.brief-bar{background:var(--white);border-bottom:1px solid var(--g100);padding:8px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.brief-bar-title{font-size:13px;font-weight:600;color:var(--pf-dark);flex:1}
+.bb-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid}
+.bb-blue{color:var(--pf-blue);border-color:rgba(0,147,208,.3);background:var(--pf-mist)}
+.bb-green{color:var(--green);border-color:rgba(0,135,90,.25);background:var(--green-lt)}
+.bb-amber{color:var(--amber);border-color:rgba(160,92,0,.25);background:var(--amber-lt)}
+.bb-btn{background:none;border:1.5px solid var(--g200);border-radius:var(--r-sm);padding:5px 12px;font:600 12px var(--font);color:var(--g600);cursor:pointer;transition:all .2s}
+.bb-btn:hover{border-color:var(--pf-blue);color:var(--pf-blue);background:var(--pf-mist)}
+.bb-btn.prim{background:var(--pf-blue);border-color:var(--pf-blue);color:#fff}
+.bb-btn.prim:hover{background:var(--pf-dark);border-color:var(--pf-dark)}
+
+/* Grammarly-style document - LARGER, more readable */
+/* ── BRIEF BUILDER (Google Sites accordion style) ── */
+.brief-scroll{flex:1;overflow-y:auto;background:var(--white);padding:0}
+.brief-scroll::-webkit-scrollbar{width:5px}
+.brief-scroll::-webkit-scrollbar-thumb{background:var(--g200);border-radius:99px}
+
+/* Welcome/empty state */
+.doc-empty{text-align:center;padding:56px 40px;color:var(--muted);font-size:15px;line-height:1.7;border-bottom:1px solid var(--g100)}
+.doc-empty strong{display:block;font-family:var(--serif);font-size:21px;color:var(--pf-dark);margin-bottom:10px}
+
+/* Accordion section */
+.brief-section{border-bottom:1px solid var(--g100)}
+.brief-sec-head{
+  display:flex;align-items:center;
+  padding:16px 28px;cursor:pointer;
+  background:var(--white);transition:background .15s;
+  user-select:none;gap:12px;
+}
+.brief-sec-head:hover{background:var(--g50)}
+.brief-sec-head:hover .bsh-chevron{color:var(--pf-blue)}
+.brief-sec-head.open{background:var(--g50)}
+.bsh-num{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--pf-blue);color:#fff;
+  font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.bsh-title{font-size:14px;font-weight:700;color:var(--text);flex:1}
+.bsh-preview{font-size:12px;color:var(--muted);flex:2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 16px}
+.bsh-count{font-size:11px;color:var(--g300);white-space:nowrap;font-family:monospace}
+.bsh-chevron{font-size:10px;color:var(--g300);transition:transform .2s;flex-shrink:0}
+.brief-sec-head.open .bsh-chevron{transform:rotate(180deg)}
+
+/* Accordion body */
+.brief-sec-body{
+  display:none;padding:0 28px 20px 64px;
+  background:var(--white);
+  animation:slideDown .2s ease;
+}
+.brief-sec-body.open{display:block}
+@keyframes slideDown{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* Textarea inside accordion */
+.brief-ta-wrap{position:relative}
+.brief-ta{
+  width:100%;border:1.5px solid var(--g200);
+  border-radius:var(--r-sm);
+  padding:14px 16px;font:400 15px var(--font);
+  color:var(--text);line-height:1.75;
+  resize:none;outline:none;
+  background:var(--white);
+  transition:border-color .2s,box-shadow .2s;
+  min-height:90px;
+}
+.brief-ta:focus{border-color:var(--pf-blue);box-shadow:0 0 0 3px rgba(0,147,208,.1)}
+.brief-ta.heading-ta{font-family:var(--serif);font-size:22px;color:var(--pf-dark);min-height:52px}
+.brief-ta-foot{
+  display:flex;justify-content:flex-end;
+  font-size:11px;color:var(--g300);margin-top:4px;
+  font-family:monospace;
+}
+.brief-ta-foot span.warn{color:var(--amber);font-weight:700}
+.brief-ta-foot span.over{color:var(--red);font-weight:700}
+
+/* AI recs inline in brief */
+.brief-ai-tip{
+  background:var(--pf-mist);border:1px solid var(--pf-sky);
+  border-radius:var(--r-sm);padding:10px 14px;
+  margin-top:8px;font-size:12px;color:var(--pf-dark);
+  line-height:1.55;display:none;
+}
+.brief-ai-tip.on{display:block}
+.brief-ai-tip strong{font-weight:700}
+
+.brief-foot{background:var(--white);border-top:1px solid var(--g100);padding:10px 28px;display:flex;align-items:center;gap:10px;font-size:11px;color:var(--muted);flex-shrink:0}
+
+/* ── CANVAS BLOCKS (bigger, full-width white) ── */
+
+/* ═══════════════ PANEL 3: BUILDER ═══════════════ */
+#p-build{overflow:hidden}
+.build-tabs{background:var(--white);border-bottom:1px solid var(--g100);display:flex;align-items:center;padding:0 16px;flex-shrink:0}
+.bt-tab{padding:11px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .18s;white-space:nowrap}
+.bt-tab:hover{color:var(--pf-blue)}
+.bt-tab.on{color:var(--pf-dark);border-bottom-color:var(--pf-blue)}
+.build-checks{margin-left:auto;display:flex;gap:6px;align-items:center}
+.ck-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;border:1px solid}
+.ck-ok{color:var(--green);border-color:rgba(0,135,90,.25);background:var(--green-lt)}
+.ck-info{color:var(--pf-blue);border-color:rgba(0,147,208,.25);background:var(--pf-mist)}
+.ck-pulse{animation:ckp 1.8s ease-in-out infinite}
+@keyframes ckp{0%,100%{opacity:1}50%{opacity:.4}}
+.btab-body{display:none;flex:1;overflow:hidden;flex-direction:column}
+.btab-body.on{display:flex}
+
+/* Layout picker */
+.lay-wrap{flex:1;overflow-y:auto;padding:22px}
+.lay-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px}
+.lay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.lay-opt{background:var(--white);border:2px solid var(--g100);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:var(--sh-sm)}
+.lay-opt:hover{border-color:var(--pf-blue);box-shadow:var(--sh-md);transform:translateY(-2px)}
+.lay-opt.chosen{border-color:var(--pf-blue);box-shadow:0 0 0 3px rgba(0,147,208,.18)}
+.lay-thumb{width:100%;aspect-ratio:16/9;background:var(--g50);padding:8px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.lt-hero{background:linear-gradient(135deg,var(--pf-dark),var(--pf-blue));border-radius:4px;flex:2.5;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;padding:6px}
+.lt-hbar{height:5px;background:rgba(255,255,255,.7);border-radius:99px;width:65%}
+.lt-hbar.s{width:45%;background:rgba(255,255,255,.4);height:3px}
+.lt-hbar.b{width:28%;background:#fff;height:9px;border-radius:3px;margin-top:3px}
+.lt-cards{display:flex;gap:4px;flex:1.2}
+.lt-card{flex:1;background:var(--white);border-radius:4px;border:1px solid var(--g200)}
+.lt-cols{display:flex;gap:4px;flex:2}
+.lt-col-a{flex:1.8;display:flex;flex-direction:column;gap:3px;padding:4px}
+.lt-col-b{flex:1;background:var(--pf-sky);border-radius:4px}
+.lt-line{height:4px;background:var(--g200);border-radius:99px}
+.lt-line.dk{background:var(--g300)}
+.lt-ctr{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px;flex:1}
+.lay-meta{padding:9px 11px}
+.lay-name{font-size:12px;font-weight:700;color:var(--text)}
+.lay-desc{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* Canvas - Google Sites style, full-width white cards */
+.canvas-area{
+  flex:1;overflow-y:auto;
+  padding:24px 32px;gap:0;
+  display:flex;flex-direction:column;
+  background:var(--white);
+}
+.canvas-area::-webkit-scrollbar{width:5px}
+.canvas-area::-webkit-scrollbar-thumb{background:var(--g200);border-radius:99px}
+
+/* Each section = accordion-style card */
+.c-block{
+  background:var(--white);
+  border:none;border-bottom:1px solid var(--g100);
+  border-radius:0;overflow:visible;
+}
+.c-block:first-child{border-top:1px solid var(--g100)}
+.c-bhead{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 0;cursor:pointer;
+  background:var(--white);user-select:none;
+  transition:background .15s;
+}
+.c-bhead:hover{background:var(--g50);padding-left:8px;padding-right:8px;margin:0 -8px;border-radius:var(--r-sm)}
+.c-bname{
+  font-size:14px;font-weight:700;color:var(--text);flex:1;
+  display:flex;align-items:center;gap:8px;
+}
+.c-bname::before{
+  content:'';width:4px;height:16px;border-radius:2px;
+  background:var(--pf-blue);flex-shrink:0;
+}
+.c-del{background:none;border:none;color:var(--g300);cursor:pointer;font-size:13px;padding:4px 6px;transition:all .18s;border-radius:var(--r-sm)}
+.c-del:hover{color:var(--red);background:var(--red-lt)}
+.c-btoggle{font-size:10px;color:var(--g300);transition:transform .2s;flex-shrink:0}
+.c-block.collapsed .c-btoggle{transform:rotate(-90deg)}
+.c-bbody{padding:8px 0 20px 12px;display:block}
+.c-block.collapsed .c-bbody{display:none}
+
+.c-field-group{margin-bottom:16px}
+.c-field-group:last-child{margin-bottom:0}
+.c-flabel{
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--muted);
+  margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;
+}
+.c-char-count{font-family:monospace;font-size:10px;color:var(--g300);font-weight:400;text-transform:none;letter-spacing:0}
+.c-char-count.warn{color:var(--amber)}
+.c-char-count.over{color:var(--red)}
+
+/* BIGGER, cleaner textareas */
+.c-edit{
+  width:100%;
+  border:1.5px solid var(--g200);outline:none;
+  background:var(--g50);border-radius:var(--r-sm);
+  padding:12px 16px;font-family:var(--font);
+  color:var(--text);resize:none;transition:all .2s;
+  line-height:1.8;font-size:15px;
+  display:block;
+}
+.c-edit:hover{border-color:var(--g300);background:var(--white)}
+.c-edit:focus{border-color:var(--pf-blue);background:var(--white);box-shadow:0 0 0 3px rgba(0,147,208,.1)}
+.c-edit.heading{
+  font-family:var(--serif);font-size:24px;color:var(--pf-dark);
+  font-weight:400;min-height:56px;background:var(--white);
+  border:none;border-bottom:2px solid var(--pf-blue);
+  border-radius:0;padding:8px 0;
+  box-shadow:none;
+}
+.c-edit.heading:focus{border-bottom-color:var(--pf-dark);box-shadow:none}
+
+.add-blk{
+  background:none;border:2px dashed var(--g200);border-radius:var(--r);
+  padding:14px;font:600 13px var(--font);color:var(--muted);
+  cursor:pointer;transition:all .2s;text-align:center;
+  margin-top:16px;
+}
+.add-blk:hover{border-color:var(--pf-blue);color:var(--pf-blue);background:var(--pf-mist)}
+.build-foot{background:var(--white);border-top:1px solid var(--g100);padding:10px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.bfbtn{background:none;border:1.5px solid var(--g200);border-radius:var(--r-sm);padding:7px 16px;font:600 12px var(--font);color:var(--g600);cursor:pointer;transition:all .2s}
+.bfbtn:hover{border-color:var(--pf-blue);color:var(--pf-blue)}
+.bfbtn.prim{background:var(--pf-blue);border-color:var(--pf-blue);color:#fff;margin-left:auto}
+.bfbtn.prim:hover{background:var(--pf-dark);border-color:var(--pf-dark)}
+
+/* Preview tab */
+.prev-bar{background:var(--g25);border-bottom:1px solid var(--g100);padding:7px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.prev-url{flex:1;background:var(--white);border:1px solid var(--g200);border-radius:20px;padding:4px 12px;font:400 11px monospace;color:var(--soft)}
+.prev-open{background:none;border:1px solid var(--g200);border-radius:var(--r-sm);padding:4px 10px;font:600 11px var(--font);color:var(--g600);cursor:pointer;transition:all .18s}
+.prev-open:hover{border-color:var(--pf-blue);color:var(--pf-blue)}
+#previewFrame{flex:1;border:none;background:var(--white)}
+
+/* ═══════════════ PANEL 4: REVIEW ═══════════════ */
+/* Full redesign: shows preview of failing content inline */
+#p-review{overflow:hidden}
+.rev-bar{background:var(--white);border-bottom:1px solid var(--g100);padding:10px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.rev-bar-title{font-family:var(--serif);font-size:17px;color:var(--pf-dark);flex:1}
+.score-chip{display:flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font:700 13px var(--font);border:1.5px solid}
+.sc-pass{background:var(--green-lt);border-color:rgba(0,135,90,.25);color:var(--green)}
+.sc-fail{background:var(--red-lt);border-color:rgba(185,28,28,.25);color:var(--red)}
+.sc-warn{background:var(--amber-lt);border-color:rgba(160,92,0,.25);color:var(--amber)}
+.rev-scroll{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:16px}
+.rev-scroll::-webkit-scrollbar{width:4px}
+.rev-scroll::-webkit-scrollbar-thumb{background:var(--g200);border-radius:99px}
+
+/* Score ring at top */
+.rev-score-row{display:flex;align-items:center;gap:20px;background:var(--white);border:1.5px solid var(--g100);border-radius:var(--r);padding:20px 24px;box-shadow:var(--sh-sm)}
+.rev-arc{position:relative;width:80px;height:80px;flex-shrink:0}
+.rev-arc svg{transform:rotate(-90deg)}
+.rev-arc-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 18px var(--font);color:var(--pf-dark)}
+.rev-score-info{flex:1}
+.rsi-title{font:700 15px var(--font);color:var(--text);margin-bottom:4px}
+.rsi-sub{font-size:13px;color:var(--muted);line-height:1.5}
+.rsi-bars{margin-top:10px;display:flex;flex-direction:column;gap:5px}
+.rsi-bar-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.rsi-bar-lbl{width:90px;flex-shrink:0}
+.rsi-bar{flex:1;height:5px;background:var(--g100);border-radius:99px;overflow:hidden}
+.rsi-bar-fill{height:100%;border-radius:99px}
+.rsi-bar-v{width:30px;text-align:right;font-weight:700;font-size:11px}
+
+/* Review issues - the real content */
+.rev-section{background:var(--white);border:1.5px solid var(--g100);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-sm)}
+.rev-sec-head{padding:12px 18px;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:10px;background:var(--g25)}
+.rev-sec-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--g400);flex:1}
+.rev-sec-count{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--red-lt);color:var(--red)}
+.rev-sec-count.ok{background:var(--green-lt);color:var(--green)}
+.rev-body{padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+
+/* Each failing item with highlighted content preview */
+.rev-issue{border:1px solid var(--g100);border-radius:var(--r-sm);overflow:hidden;transition:all .2s}
+.rev-issue.approved{border-color:var(--green);background:var(--green-lt);opacity:.7}
+.rev-issue.declined{opacity:.45}
+.rev-issue-head{padding:10px 14px;display:flex;align-items:flex-start;gap:10px;background:var(--g25);border-bottom:1px solid var(--g100)}
+.rev-issue-head.high{background:var(--red-lt);border-bottom-color:rgba(185,28,28,.15)}
+.rev-issue-head.medium{background:var(--amber-lt);border-bottom-color:rgba(160,92,0,.15)}
+.rev-issue-head.low{background:var(--pf-mist);border-bottom-color:var(--pf-sky)}
+.rii-sev{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;padding:3px 8px;border-radius:20px;flex-shrink:0;margin-top:1px}
+.rii-sev.high{background:rgba(185,28,28,.15);color:var(--red)}
+.rii-sev.medium{background:rgba(160,92,0,.12);color:var(--amber)}
+.rii-sev.low{background:rgba(0,147,208,.12);color:var(--pf-blue)}
+.rii-info{flex:1}
+.rii-field{font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px}
+.rii-issue{font-size:13px;color:var(--soft);line-height:1.5}
+.rev-issue-body{padding:12px 14px}
+/* Highlighted content preview */
+.content-preview{
+  background:var(--white);border:1px solid var(--g200);border-radius:var(--r-sm);
+  padding:10px 12px;margin-bottom:10px;font-size:13px;line-height:1.65;color:var(--text);
+  border-left:3px solid var(--amber);
+}
+.content-preview mark{background:#FEF3C7;border-bottom:2px solid #F59E0B;border-radius:2px;padding:0 2px}
+.content-preview mark.high{background:var(--red-lt);border-bottom-color:var(--red)}
+.rec-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--g300);margin-bottom:5px}
+.rec-text{font-size:13px;color:var(--green);font-weight:600;line-height:1.5;margin-bottom:10px;padding:8px 10px;background:var(--green-lt);border-radius:var(--r-sm)}
+.rev-btns{display:flex;gap:8px}
+.rev-accept{background:var(--green);color:#fff;border:none;border-radius:var(--r-sm);padding:7px 16px;font:700 12px var(--font);cursor:pointer;transition:all .18s;flex:1}
+.rev-accept:hover{background:#006644}
+.rev-decline{background:none;border:1.5px solid var(--g200);border-radius:var(--r-sm);padding:7px 16px;font:600 12px var(--font);color:var(--muted);cursor:pointer;transition:all .18s;flex:1}
+.rev-decline:hover{border-color:var(--g300);color:var(--text)}
+.rev-done-msg{font-size:12px;font-weight:700;text-align:center;padding:6px;color:var(--green)}
+.rev-done-msg.declined{color:var(--muted)}
+
+/* ── REVIEW TABS ── */
+.rev-tabs{display:flex;border-bottom:1px solid var(--g100);background:var(--white);flex-shrink:0;padding:0 16px}
+.rev-tab{padding:10px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .18s;white-space:nowrap}
+.rev-tab:hover{color:var(--pf-blue)}
+.rev-tab.on{color:var(--pf-dark);border-bottom-color:var(--pf-blue)}
+.rev-tab-body{display:none;flex:1;overflow-y:auto}
+.rev-tab-body.on{display:block}
+.rev-tab-body::-webkit-scrollbar{width:4px}
+.rev-tab-body::-webkit-scrollbar-thumb{background:var(--g200);border-radius:99px}
+
+/* Full content preview tab in review */
+.rev-preview-doc{
+  max-width:700px;margin:0 auto;
+  padding:32px 40px;background:var(--white);
+}
+.rpd-section{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--g100)}
+.rpd-section:last-child{border-bottom:none}
+.rpd-section-name{
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--g300);margin-bottom:8px;
+}
+.rpd-content{
+  font-size:15px;line-height:1.8;color:var(--text);
+  padding:12px 16px;background:var(--g25);border-radius:var(--r-sm);
+  border-left:3px solid var(--g200);white-space:pre-wrap;
+}
+.rpd-content mark.rev-high{background:var(--red-lt);border-bottom:2px solid var(--red);border-radius:2px;padding:0 2px;cursor:help}
+.rpd-content mark.rev-medium{background:var(--amber-lt);border-bottom:2px solid var(--amber);border-radius:2px;padding:0 2px;cursor:help}
+.rpd-content mark.rev-low{background:var(--pf-mist);border-bottom:2px solid var(--pf-blue);border-radius:2px;padding:0 2px;cursor:help}
+.rpd-legend{display:flex;gap:12px;flex-wrap:wrap;padding:12px 16px;background:var(--g25);border-radius:var(--r-sm);margin-bottom:16px;font-size:11px}
+.rpd-leg-item{display:flex;align-items:center;gap:5px;color:var(--soft)}
+.rpd-leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+.rev-actions{display:flex;gap:10px;justify-content:flex-end;padding:4px 0}
+.rev-threshold-warn{
+  background:var(--red-lt);border:1.5px solid rgba(185,28,28,.25);
+  border-radius:var(--r);padding:14px 18px;font-size:13px;color:var(--red);font-weight:600;
+  display:none;
+}
+.rev-threshold-warn.on{display:block}
+
+/* ═══════════════ PANEL 5: SUBMIT ═══════════════ */
+#p-sub{overflow-y:auto;padding:28px;align-items:center}
+.sub-card{background:var(--white);border:1.5px solid var(--g100);border-radius:20px;box-shadow:var(--sh-md);padding:34px 40px;max-width:500px;width:100%}
+.sub-title{font-family:var(--serif);font-size:21px;color:var(--pf-dark);margin-bottom:4px}
+.sub-desc{font-size:13px;color:var(--muted);margin-bottom:20px}
+.sub-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.sm-box{background:var(--g25);border:1px solid var(--g100);border-radius:var(--r-sm);padding:8px 11px}
+.sm-l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--g300);margin-bottom:2px}
+.sm-v{font-size:13px;font-weight:600;color:var(--text)}
+.tc-scroll{background:var(--g25);border:1px solid var(--g100);border-radius:var(--r-sm);padding:12px;font-size:12.5px;line-height:1.65;color:var(--soft);max-height:120px;overflow-y:auto;margin-bottom:12px}
+.tc-agree{display:flex;align-items:center;gap:9px;margin-bottom:18px;cursor:pointer}
+.tc-agree input{width:15px;height:15px;accent-color:var(--pf-blue);cursor:pointer}
+.tc-agree label{font-size:13px;font-weight:500;color:var(--text);cursor:pointer}
+.btn-submit{width:100%;background:linear-gradient(135deg,var(--pf-blue),var(--pf-dark));color:#fff;border:none;border-radius:var(--r-sm);padding:11px;font:700 14px var(--font);cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(0,147,208,.3)}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,147,208,.42)}
+.btn-submit:disabled{background:var(--g200);box-shadow:none;cursor:not-allowed;transform:none}
+
+/* ═══════════════ TOAST ═══════════════ */
+.toast{position:fixed;bottom:18px;right:18px;z-index:9999;background:var(--g800);color:#fff;padding:10px 14px;border-radius:var(--r);box-shadow:var(--sh-lg);font:500 13px var(--font);display:flex;align-items:center;gap:7px;animation:fadeUp .25s ease;max-width:280px}
+.toast.ok{background:var(--green)}
+.toast.info{background:var(--pf-dark)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <span class="hdr-logo">Pharmaceutical Company</span>
+  <div class="hdr-sep"></div>
+  <span class="hdr-app">Design-to-Delivery Accelerator</span>
+  <div class="hdr-r">
+    <span class="hdr-badge">CXI+AI · University of Liverpool</span>
+    <div class="hdr-user" id="hdrUser">
+      <div class="hdr-av" id="hdrAv">-</div>
+      <span class="hdr-name" id="hdrName">User</span>
+    </div>
+  </div>
+</header>
+
+<!-- TOP PROJECT BAR (project details, not section names) -->
+<div class="proj-bar" id="projBar">
+  <div class="proj-field" style="display:none" id="pbBuild"><span class="pf-lbl">Type</span><span class="pf-val" id="pbBuildVal">-</span></div>
+  <div class="proj-field" style="display:none" id="pbAud"><span class="pf-lbl">Audience</span><span class="pf-val" id="pbAudVal">-</span></div>
+  <div class="proj-field" style="display:none" id="pbReg"><span class="pf-lbl">Region</span><span class="pf-val" id="pbRegVal">-</span></div>
+  <div class="proj-field" style="display:none" id="pbLang"><span class="pf-lbl">Language</span><span class="pf-val" id="pbLangVal">-</span></div>
+  <div class="proj-field" style="display:none" id="pbUser"><span class="pf-lbl">Owner</span><span class="pf-val" id="pbUserVal">-</span></div>
+  <div class="proj-bar-right">
+    <div class="prog-wrap">
+      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <span class="prog-pct" id="progPct">0%</span>
+    </div>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="ws">
+
+<!-- LEFT SIDEBAR -->
+<aside class="lsb">
+  <div class="lsb-user" id="lsbUser">
+    <div class="lsb-name" id="lsbName">-</div>
+    <div class="lsb-meta" id="lsbMeta">-</div>
+  </div>
+
+  <div class="lsb-nav" id="lsbNav">
+    <div class="nav-title">Workflow</div>
+    <div class="nav-item active" id="ni0" onclick="go(0)"><div class="nnum">1</div><span>Register</span></div>
+    <div class="nav-item locked" id="ni1" onclick="go(1)"><div class="nnum">2</div><span>Preliminary</span></div>
+    <div class="nav-item locked" id="ni2" onclick="go(2)"><div class="nnum">3</div><span>Brief</span></div>
+    <div class="nav-item locked" id="ni3" onclick="go(3)"><div class="nnum">4</div><span>Builder</span></div>
+    <div class="nav-item locked" id="ni4" onclick="go(4)"><div class="nnum">5</div><span>Review</span></div>
+    <div class="nav-item locked" id="ni5" onclick="go(5)"><div class="nnum">6</div><span>Submit</span></div>
+  </div>
+
+  <!-- Shown after submission - locks everything -->
+  <div class="lsb-locked" id="lsbLocked">
+    <div class="ll-title">Submitted for Review</div>
+    <div class="ll-body">Your project is with the IT review team. You will receive a status update at:</div>
+    <div class="ll-email" id="llEmail">-</div>
+    <div class="ll-body" style="margin-top:6px">No further changes can be made at this time.</div>
+  </div>
+
+  <div class="lsb-bot">
+    <button class="save-btn" onclick="save()">Save Session</button>
+    <div class="save-ts" id="saveTs">Not saved yet</div>
+  </div>
+</aside>
+
+<!-- CENTER -->
+<main class="center">
+
+  <!-- Prelim context bar -->
+  <div class="ctx" id="ctxBar">
+    <span class="ctx-lbl">Project</span>
+    <span class="ctx-pill" id="ctxB">-</span>
+    <span class="ctx-pill" id="ctxA">-</span>
+    <span class="ctx-pill" id="ctxR">-</span>
+    <span class="ctx-pill" id="ctxL">-</span>
+  </div>
+
+  <!-- ── PANEL 0: REGISTER ── -->
+  <div class="panel on" id="p-reg">
+    <div class="reg-card">
+      <div class="reg-title">Welcome to the Accelerator</div>
+      <div class="reg-sub">Enter your details to personalise your workspace.</div>
+      <div class="fg fg-row">
+        <div><label class="fl">First Name</label><input class="fi" id="rFN" placeholder="Jane"/></div>
+        <div><label class="fl">Last Name</label><input class="fi" id="rLN" placeholder="Smith"/></div>
+      </div>
+      <div class="fg"><label class="fl">Company Email</label><input class="fi" id="rEmail" type="email" placeholder="jane.smith@pharmaceuticalcompany.com"/></div>
+      <div class="fg">
+        <label class="fl">Phone Number</label>
+        <div class="phone-row">
+          <select class="fi phone-code" id="rCode">
+            <option>🇬🇧 +44</option><option>🇺🇸 +1</option><option>🇫🇷 +33</option>
+            <option>🇩🇪 +49</option><option>🇪🇸 +34</option><option>🇮🇹 +39</option>
+            <option>🇳🇱 +31</option><option>🇦🇺 +61</option><option>🇯🇵 +81</option>
+            <option>🇨🇳 +86</option><option>🇮🇳 +91</option><option>🇧🇷 +55</option>
+            <option>🇸🇬 +65</option><option>🇦🇪 +971</option>
+          </select>
+          <input class="fi" id="rPhone" placeholder="7700 000000" style="flex:1;background-image:none;padding-right:11px"/>
+        </div>
+      </div>
+      <div class="fg fg-row">
+        <div><label class="fl">Employee Number</label><input class="fi" id="rEmp" placeholder="EMP-00000"/></div>
+        <div><label class="fl">Department</label><input class="fi" id="rDept" placeholder="Digital Marketing"/></div>
+      </div>
+      <div class="fg">
+        <label class="fl">Country / Region</label>
+        <select class="fi" id="rCountry">
+          <option value="">Select…</option>
+          <option>United Kingdom</option><option>United States</option><option>Germany</option>
+          <option>France</option><option>Spain</option><option>Italy</option>
+          <option>Netherlands</option><option>Australia</option><option>Japan</option>
+          <option>China</option><option>India</option><option>Brazil</option>
+          <option>South Africa</option><option>UAE</option><option>Singapore</option><option>Global</option>
+        </select>
+      </div>
+      <button class="btn-go" onclick="submitReg()">Continue to Workspace →</button>
+      <a class="load-link" onclick="load()">Load a saved session</a>
+    </div>
+  </div>
+
+  <!-- ── PANEL 1: PRELIMINARY ── -->
+  <div class="panel" id="p-pre">
+    <div class="pre-title" id="preTitle">Set up your project</div>
+    <div class="pre-sub">Select your options - these personalise every step.</div>
+    <div class="pre-grid">
+      <div class="pre-card">
+        <div class="pc-lbl">What are you building?</div>
+        <div class="chips" id="cBuild">
+          <div class="chip" onclick="chip(this,'build')">Website</div>
+          <div class="chip" onclick="chip(this,'build')">Webpage</div>
+          <div class="chip" onclick="chip(this,'build')">Landing Page</div>
+          <div class="chip" onclick="chip(this,'build')">Microsite</div>
+        </div>
+      </div>
+      <div class="pre-card">
+        <div class="pc-lbl">Target Audience</div>
+        <div class="chips" id="cAud">
+          <div class="chip" onclick="chip(this,'audience')">Patients</div>
+          <div class="chip" onclick="chip(this,'audience')">Healthcare Providers</div>
+          <div class="chip" onclick="chip(this,'audience')">Channel Partners</div>
+          <div class="chip" onclick="chip(this,'audience')">Internal Teams</div>
+        </div>
+      </div>
+      <div class="pre-card">
+        <div class="pc-lbl">Primary Language</div>
+        <div class="chips" id="cLang">
+          <div class="chip" onclick="chip(this,'language')">English</div>
+          <div class="chip" onclick="chip(this,'language')">French</div>
+          <div class="chip" onclick="chip(this,'language')">German</div>
+          <div class="chip" onclick="chip(this,'language')">Spanish</div>
+          <div class="chip" onclick="chip(this,'language')">Mandarin</div>
+        </div>
+      </div>
+      <div class="pre-card">
+        <div class="pc-lbl">AI Translation</div>
+        <div class="chips" id="cTrans">
+          <div class="chip" onclick="chip(this,'translation')">Yes - all content</div>
+          <div class="chip" onclick="chip(this,'translation')">Key pages only</div>
+          <div class="chip" onclick="chip(this,'translation')">No - English only</div>
+        </div>
+      </div>
+    </div>
+    <div class="pre-actions">
+      <button class="btn-confirm" id="preCTA" disabled onclick="confirmPre()">Confirm &amp; Continue →</button>
+    </div>
+  </div>
+
+  <!-- ── PANEL 2: BRIEF EDITOR ── -->
+  <div class="panel" id="p-brief">
+    <div class="brief-bar">
+      <div class="brief-bar-title" id="briefBarTitle">Brief Editor</div>
+      <span class="bb-pill bb-blue" id="briefPill">Awaiting input</span>
+      <button class="bb-btn" id="aiRevBtn" onclick="aiReview()" style="display:none">AI Review</button>
+      <button class="bb-btn prim" id="confirmBriefBtn" onclick="confirmBrief()" style="display:none">Confirm Brief</button>
+    </div>
+    <div class="brief-scroll" id="briefScroll">
+      <!-- Empty state -->
+      <div class="doc-empty" id="docEmpty">
+        <strong>Describe your project in the prompt bar →</strong>
+        Your brief will appear here as expandable sections - each one directly editable with a live character count.<br><br>
+        <span style="font-size:13px;color:var(--muted)">Try a starter prompt:</span>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px">
+          <button onclick="useStarter(this)" style="background:var(--white);border:1.5px solid var(--pf-blue);color:var(--pf-blue);border-radius:20px;padding:6px 14px;font:600 12px var(--font);cursor:pointer">Patient information page</button>
+          <button onclick="useStarter(this)" style="background:var(--white);border:1.5px solid var(--pf-blue);color:var(--pf-blue);border-radius:20px;padding:6px 14px;font:600 12px var(--font);cursor:pointer">HCP product hub</button>
+          <button onclick="useStarter(this)" style="background:var(--white);border:1.5px solid var(--pf-blue);color:var(--pf-blue);border-radius:20px;padding:6px 14px;font:600 12px var(--font);cursor:pointer">Internal team landing page</button>
+          <button onclick="useStarter(this)" style="background:var(--white);border:1.5px solid var(--pf-blue);color:var(--pf-blue);border-radius:20px;padding:6px 14px;font:600 12px var(--font);cursor:pointer">Campaign microsite</button>
+        </div>
+      </div>
+      <!-- Accordion sections injected by renderDoc() -->
+      <div id="docSheet"></div>
+    </div>
+    <div class="brief-foot">
+      <span id="wCount">-</span>
+      <span class="bb-pill bb-green" id="gramPill" style="display:none">Grammar clear</span>
+      <span class="bb-pill bb-amber" id="compPill" style="display:none">2 compliance notes</span>
+    </div>
+  </div>
+
+  <!-- ── PANEL 3: BUILDER ── -->
+  <div class="panel" id="p-build">
+    <div class="build-tabs">
+      <div class="bt-tab on" onclick="btab(this,'bt-lay')">Layouts</div>
+      <div class="bt-tab" onclick="btab(this,'bt-canvas')">Edit Content</div>
+      <div class="bt-tab" onclick="btab(this,'bt-prev')">Preview</div>
+      <div class="build-checks">
+        <span class="ck-badge ck-ok">Grammar clear</span>
+        <span class="ck-badge ck-info ck-pulse" id="compChk">Compliance checking…</span>
+      </div>
+    </div>
+    <div class="btab-body on" id="bt-lay">
+      <div class="lay-wrap">
+        <div class="lay-title">Choose a layout - content auto-populates from your brief</div>
+        <div class="lay-grid">
+          <div class="lay-opt" onclick="pickLayout(this,'hero')">
+            <div class="lay-thumb"><div class="lt-hero"><div class="lt-hbar"></div><div class="lt-hbar s"></div><div class="lt-hbar b"></div></div><div class="lt-cards"><div class="lt-card"></div><div class="lt-card"></div><div class="lt-card"></div></div></div>
+            <div class="lay-meta"><div class="lay-name">Hero + Cards</div><div class="lay-desc">Bold banner with feature grid</div></div>
+          </div>
+          <div class="lay-opt" onclick="pickLayout(this,'two-col')">
+            <div class="lay-thumb"><div style="height:10px;background:var(--pf-dark);border-radius:3px;margin-bottom:6px"></div><div class="lt-cols"><div class="lt-col-a"><div class="lt-line dk"></div><div class="lt-line"></div><div class="lt-line"></div><div class="lt-line" style="width:70%"></div></div><div class="lt-col-b"></div></div></div>
+            <div class="lay-meta"><div class="lay-name">Two Column</div><div class="lay-desc">Content with sidebar</div></div>
+          </div>
+          <div class="lay-opt" onclick="pickLayout(this,'cards')">
+            <div class="lay-thumb"><div class="lt-ctr"><div class="lt-hbar" style="background:var(--pf-dark);height:7px;width:55%"></div></div><div class="lt-cards" style="flex:2"><div class="lt-card" style="background:var(--pf-mist)"></div><div class="lt-card" style="background:var(--pf-sky)"></div><div class="lt-card" style="background:var(--g100)"></div></div></div>
+            <div class="lay-meta"><div class="lay-name">Card Grid</div><div class="lay-desc">Feature highlights in tiles</div></div>
+          </div>
+          <div class="lay-opt" onclick="pickLayout(this,'split')">
+            <div class="lay-thumb" style="flex-direction:row;gap:0;padding:0"><div style="flex:1;background:linear-gradient(180deg,var(--pf-dark),var(--pf-blue));display:flex;flex-direction:column;justify-content:center;padding:10px;gap:5px;border-radius:4px 0 0 4px"><div class="lt-hbar"></div><div class="lt-hbar s"></div></div><div style="flex:1;background:var(--g100);border-radius:0 4px 4px 0"></div></div>
+            <div class="lay-meta"><div class="lay-name">Split</div><div class="lay-desc">50/50 image and content</div></div>
+          </div>
+          <div class="lay-opt" onclick="pickLayout(this,'article')">
+            <div class="lay-thumb"><div style="height:14px;background:var(--pf-dark);border-radius:3px;width:65%;margin-bottom:7px"></div><div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="lt-line dk" style="width:90%"></div><div class="lt-line"></div><div class="lt-line"></div><div class="lt-line" style="width:70%"></div></div></div>
+            <div class="lay-meta"><div class="lay-name">Article</div><div class="lay-desc">Long-form editorial</div></div>
+          </div>
+          <div class="lay-opt" onclick="pickLayout(this,'minimal')">
+            <div class="lay-thumb"><div class="lt-ctr"><div class="lt-hbar" style="background:var(--pf-dark);height:9px;width:50%"></div><div class="lt-hbar" style="height:4px;width:70%"></div><div class="lt-hbar" style="height:4px;width:60%"></div><div class="lt-hbar" style="background:var(--pf-blue);height:7px;width:30%;border-radius:3px"></div></div></div>
+            <div class="lay-meta"><div class="lay-name">Minimal</div><div class="lay-desc">Clean centred editorial</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="btab-body" id="bt-canvas">
+      <div class="canvas-area" id="canvasArea"><div style="text-align:center;padding:48px 32px">
+  <div style="font-size:40px;margin-bottom:14px;opacity:.4">🎨</div>
+  <div style="font:700 16px var(--font);color:var(--text);margin-bottom:6px">Choose a layout to get started</div>
+  <div style="font-size:13px;color:var(--muted);line-height:1.6">Go to the <strong>Layouts</strong> tab and pick a template - your brief content will be auto-populated into all sections.</div>
+</div></div>
+      <div class="build-foot">
+        <button class="bfbtn" onclick="addBlk()">Add Section</button>
+        <button class="bfbtn prim" onclick="go(4)">Proceed to Review →</button>
+      </div>
+    </div>
+    <div class="btab-body" id="bt-prev" style="flex-direction:column">
+      <div class="prev-bar">
+        <div class="prev-url" id="prevUrl">pharmaceutical-company-draft.preview/your-project</div>
+        <button class="prev-open" onclick="openTab()">Open in tab</button>
+      </div>
+      <iframe id="previewFrame" style="flex:1;border:none;background:white" srcdoc="<p style='font-family:sans-serif;padding:40px;color:#666;text-align:center'>Build content first to see your live preview.</p>"></iframe>
+    </div>
+  </div>
+
+  <!-- ── PANEL 4: REVIEW ── -->
+  <div class="panel" id="p-review">
+    <div class="rev-bar">
+      <div class="rev-bar-title">AI Verification Report</div>
+      <span id="scoreChip" class="score-chip sc-warn" id="scoreChip">Ready to check</span>
+      <button class="bb-btn" onclick="runPIE()"> PIE Check"</button>
+      <button class="bb-btn" onclick="runReview()" id="reRunBtn" style="display:none">Re-run</button>
+    </div>
+    <!-- Review tabs -->
+    <div class="rev-tabs">
+      <div class="rev-tab on" onclick="revTab(this,'rt-issues')">Issues &amp; Actions</div>
+      <div class="rev-tab" onclick="revTab(this,'rt-preview')">Content Preview</div>
+    </div>
+
+    <!-- Tab 1: issues -->
+    <div class="rev-tab-body on" id="rt-issues">
+    <div class="rev-scroll" id="revScroll">
+
+      <!-- Score ring -->
+      <div class="rev-score-row" id="revScoreRow">
+        <div class="rev-arc">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--g100)" stroke-width="8"/>
+            <circle cx="40" cy="40" r="30" fill="none" id="scoreArc" stroke="var(--pf-blue)" stroke-width="8"
+              stroke-dasharray="188" stroke-dashoffset="188" stroke-linecap="round" style="transition:stroke-dashoffset .8s ease"/>
+          </svg>
+          <div class="rev-arc-val" id="scoreVal">-</div>
+        </div>
+        <div class="rev-score-info">
+          <div class="rsi-title" id="rsiTitle">Running verification…</div>
+          <div class="rsi-sub" id="rsiSub">Checking compliance, grammar, brand voice and accessibility against Pharmaceutical Company standards.</div>
+          <div class="rsi-bars" id="rsiBars"></div>
+        </div>
+      </div>
+
+      <!-- Threshold warning -->
+      <div class="rev-threshold-warn" id="threshWarn">
+        Score below 90% threshold. Please review and accept the recommendations below before submitting.
+      </div>
+
+      <!-- Compliance issues -->
+      <div class="rev-section" id="revCompliance">
+        <div class="rev-sec-head">
+          <div class="rev-sec-title">Compliance &amp; Accessibility</div>
+          <div class="rev-sec-count" id="compCount">-</div>
+        </div>
+        <div class="rev-body" id="compBody">
+          <div style="color:var(--muted);font-size:13px">Running compliance checks…</div>
+        </div>
+      </div>
+
+      <!-- Grammar & Brand issues -->
+      <div class="rev-section" id="revGrammar">
+        <div class="rev-sec-head">
+          <div class="rev-sec-title">Grammar &amp; Brand Voice</div>
+          <div class="rev-sec-count" id="gramCount">-</div>
+        </div>
+        <div class="rev-body" id="gramBody">
+          <div style="color:var(--muted);font-size:13px">Running grammar checks…</div>
+        </div>
+      </div>
+
+      <div class="rev-actions">
+        <button class="bfbtn" onclick="go(3)">Back to Builder</button>
+        <button class="bfbtn prim" id="proceedSubmitBtn" onclick="go(5)" disabled>Confirm &amp; Submit →</button>
+      </div>
+    </div>
+    </div><!-- /rt-issues -->
+
+    <!-- Tab 2: full content preview with highlights -->
+    <div class="rev-tab-body" id="rt-preview">
+      <div class="rev-preview-doc" id="revPreviewDoc">
+        <div class="rpd-legend">
+          <span class="rpd-leg-item"><span class="rpd-leg-dot" style="background:var(--red)"></span>High severity</span>
+          <span class="rpd-leg-item"><span class="rpd-leg-dot" style="background:var(--amber)"></span>Medium severity</span>
+          <span class="rpd-leg-item"><span class="rpd-leg-dot" style="background:var(--pf-blue)"></span>Low severity</span>
+        </div>
+        <div id="revPreviewContent">
+          <div style="color:var(--muted);font-size:14px;text-align:center;padding:40px;line-height:1.7">Run a review to see all your page content here, with issues highlighted in context.</div>
+        </div>
+      </div>
+    </div><!-- /rt-preview -->
+
+  </div>
+
+  <!-- ── PANEL 5: SUBMIT ── -->
+  <div class="panel" id="p-sub">
+    <div class="sub-card">
+      <div class="sub-title">Submit for Review</div>
+      <div class="sub-desc">Your project will be sent to the IT review team before publishing.</div>
+      <div class="sub-meta" id="subMeta"></div>
+      <div class="tc-scroll">By submitting I confirm that all content complies with Pharmaceutical Company's Digital Standards and Brand Guidelines; no unpublished clinical data is included; I have reviewed all AI-generated content; the site meets WCAG 2.1 AA; and appropriate regulatory review has been requested. The Review Team may request amendments.</div>
+      <div class="tc-agree"><input type="checkbox" id="tcBox" onchange="$i('subBtn').disabled=!this.checked"/><label for="tcBox">I agree to the Terms and Conditions</label></div>
+      <button class="btn-submit" id="subBtn" disabled onclick="finalSubmit()">Submit for Review</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- RIGHT COLUMN -->
+<aside class="rsb">
+  <div class="rtabs">
+    <div class="rtab on" id="rtt-prompt" onclick="rtab(this,'rtp-prompt')">Prompt</div>
+    <div class="rtab" id="rtt-uploads" onclick="rtab(this,'rtp-uploads')">Files</div>
+    <div class="rtab" id="rtt-recs" onclick="rtab(this,'rtp-recs')">Recs</div>
+    <div class="rtab" id="rtt-notes" onclick="rtab(this,'rtp-notes')">Notes</div>
+  </div>
+
+  <!-- Prompt -->
+  <div class="rpanel on" id="rtp-prompt">
+    <div class="prompt-area">
+      <div class="rc-lbl">AI Prompt</div>
+      <div class="prompt-box">
+        <textarea id="promptTa" placeholder="Describe your project in plain language.&#10;&#10;e.g. A patient information page for Pharmaceutical Company UK, helping people understand treatment options. Warm, reassuring tone. Needs a hero, key benefits, and a contact section." onkeydown="handlePKey(event)" oninput="autoR(this)"></textarea>
+        <button class="prompt-send" id="pSend" onclick="sendPrompt()">Generate Brief</button>
+      </div>
+    </div>
+    <div style="padding:0 14px 6px"><div class="rc-lbl">Brief History</div></div>
+    <div class="bv-list" id="bvList"><div style="font-size:12px;color:var(--g300);padding:4px 0">No versions yet</div></div>
+  </div>
+
+  <!-- Uploads / Files -->
+  <div class="rpanel" id="rtp-uploads">
+    <div class="upload-area">
+      <div class="rc-lbl">Upload Files</div>
+      <div class="drop-zone" id="dropZone"
+        onclick="$i('fileInput').click()"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleDrop(event)">
+        <div class="dz-icon">📎</div>
+        <div class="dz-text"><strong>Click to upload</strong> or drag &amp; drop</div>
+        <div class="dz-types">PDF, PNG, JPG, DOCX, TXT - max 20MB</div>
+        <input type="file" id="fileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.docx,.txt,.md" style="display:none" onchange="handleFiles(this.files)"/>
+      </div>
+      <div id="fileList"></div>
+    </div>
+  </div>
+
+  <!-- AI Recommendations (review stage) -->
+  <div class="rpanel" id="rtp-recs">
+    <div class="rec-panel" id="recPanel">
+      <div class="rec-empty" id="recEmpty">AI recommendations will appear here once you reach the Review stage.</div>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="rpanel" id="rtp-notes">
+    <div class="notes-wrap">
+      <textarea id="notepad" placeholder="Jot notes, copy ideas…&#10;&#10;Saves automatically."></textarea>
+      <div class="notes-foot">
+        <span class="notes-cnt" id="nCount">0 characters</span>
+        <button class="notes-cp" onclick="navigator.clipboard.writeText($i('notepad').value).then(()=>toast('Copied'))">Copy all</button>
+      </div>
+    </div>
+  </div>
+
+</aside>
+</div><!-- /ws -->
+
+<script>
+/* ════════════════ STATE ════════════════ */
+const S = {
+  step:0, maxStep:0,
+  user:{}, pre:{build:null,audience:null,language:null,translation:null},
+  briefs:[], currentBrief:null, layout:null,
+  uploadedFiles:[],   // {id, file, name, description, type}
+  reviewData:null,    // {score, items:[]}
+  reviewDecisions:{}, // itemId -> 'approved'|'declined'
+  submitted:false,
+  loading:false
+};
+
+const PANELS = ['p-reg','p-pre','p-brief','p-build','p-review','p-sub'];
+const PCTS   = [0,17,34,55,78,100];
+const SCORE_THRESHOLD = 90;
+
+const API = {demo:true, key:null, ollama:false};
+
+// Auto-detect Ollama
+if(location.hostname==='localhost'||location.hostname==='127.0.0.1'){
+  API.ollama=true; API.demo=false;
+}
+
+/* ════════════════ HELPERS ════════════════ */
+function $i(id){return document.getElementById(id)}
+function gv(id){return ($i(id)||{}).value||''}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function autoR(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,130)+'px'}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+
+let _tt;
+function toast(msg,type=''){
+  document.querySelector('.toast')?.remove();clearTimeout(_tt);
+  const el=document.createElement('div');el.className='toast '+(type==='ok'?'ok':type==='info'?'info':'');
+  el.textContent=msg;document.body.appendChild(el);_tt=setTimeout(()=>el.remove(),3000);
+}
+
+/* ════════════════ API LAYER ════════════════ */
+async function callAI(system,msg,maxTokens){
+  if(API.ollama){
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({system,messages:[{role:'user',content:msg}]})});
+    if(!res.ok) throw new Error('Ollama error '+res.status);
+    const d=await res.json();
+    return d.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
+  }
+  if(API.key){
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':API.key,'anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens||1000,system,messages:[{role:'user',content:msg}]})});
+    if(!res.ok) throw new Error('API error '+res.status);
+    const d=await res.json();
+    return d.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
+  }
+  await sleep(1100+Math.random()*900);throw new Error('__DEMO__');
+}
+
+/* ════════════════ NAVIGATION ════════════════ */
+function go(idx){
+  if(S.submitted) return;
+  if(idx>S.maxStep+1&&idx>0){toast('Complete the current step first');return;}
+  PANELS.forEach((id,i)=>{const el=$i(id);if(el)el.classList.toggle('on',i===idx)});
+  for(let i=0;i<=5;i++){
+    const el=$i('ni'+i);if(!el)continue;
+    el.className='nav-item'+(i<idx?' done':i===idx?' active':i>S.maxStep+1?' locked':'');
+  }
+  $i('progFill').style.width=PCTS[idx]+'%';
+  $i('progPct').textContent=PCTS[idx]+'%';
+  S.step=idx;if(idx>S.maxStep)S.maxStep=idx;
+  if(idx===2)rtab($i('rtt-prompt'),'rtp-prompt');
+  if(idx===3)rtab($i('rtt-uploads'),'rtp-uploads');
+  if(idx===4){rtab($i('rtt-recs'),'rtp-recs');runReview();}
+  if(idx===5)buildSubMeta();
+}
+
+/* ════════════════ REGISTRATION ════════════════ */
+function submitReg(){
+  const fn=gv('rFN').trim(),ln=gv('rLN').trim(),email=gv('rEmail').trim(),
+    emp=gv('rEmp').trim(),dept=gv('rDept').trim(),country=gv('rCountry');
+  if(!fn||!ln||!email||!emp||!dept||!country){toast('Please complete all required fields');return;}
+  S.user={firstName:fn,lastName:ln,email,emp,dept,country,phone:gv('rCode')+' '+gv('rPhone')};
+  // Header
+  $i('hdrUser').classList.add('on');
+  $i('hdrAv').textContent=(fn[0]+ln[0]).toUpperCase();
+  $i('hdrName').textContent=fn;
+  // Left col user card
+  $i('lsbUser').classList.add('on');
+  $i('lsbName').textContent=fn+' '+ln;
+  $i('lsbMeta').innerHTML=dept+'<br>'+emp+' · '+country;
+  // Project bar
+  $i('pbUser').style.display='';$i('pbUserVal').textContent=fn+' '+ln;
+  // Prelim title
+  $i('preTitle').textContent=`Let's set up your project, ${fn}`;
+  go(1);
+}
+
+/* ════════════════ PRELIMINARY ════════════════ */
+function chip(el,grp){
+  const ids={build:'cBuild',audience:'cAud',language:'cLang',translation:'cTrans'};
+  document.querySelectorAll('#'+ids[grp]+' .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');S.pre[grp]=el.textContent.trim();
+  $i('preCTA').disabled=!Object.values(S.pre).every(Boolean);
+}
+function confirmPre(){
+  // Context bar
+  $i('ctxB').textContent=S.pre.build;$i('ctxA').textContent=S.pre.audience;
+  $i('ctxR').textContent=S.user.country;$i('ctxL').textContent=S.pre.language;
+  $i('ctxBar').classList.add('on');
+  // Project bar pills
+  [$i('pbBuild'),$i('pbAud'),$i('pbReg'),$i('pbLang')].forEach(el=>el.style.display='');
+  $i('pbBuildVal').textContent=S.pre.build;
+  $i('pbAudVal').textContent=S.pre.audience;
+  $i('pbRegVal').textContent=S.user.country;
+  $i('pbLangVal').textContent=S.pre.language;
+  // Auto-fill prompt
+  $i('promptTa').value=`Build a ${S.pre.build} for ${S.pre.audience} in ${S.user.country}. Language: ${S.pre.language}. Translation: ${S.pre.translation}. Department: ${S.user.dept}.`;
+  autoR($i('promptTa'));
+  go(2);
+}
+
+/* ════════════════ BRIEF ════════════════ */
+function useStarter(btn){
+  const ta=$i('promptTa');
+  if(!ta)return;
+  const ctx=S.pre.build?` for a ${S.pre.build} targeting ${S.pre.audience} in ${S.user.country||'our region'}`:'';
+  ta.value=btn.textContent+ctx;
+  autoR(ta);ta.focus();
+  // Switch right col to prompt tab
+  rtab($i('rtt-prompt'),'rtp-prompt');
+  toast('Prompt ready - click Generate Brief');
+}
+
+function handlePKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendPrompt();}}
+
+function demoBrief(prompt){
+  const {build,audience,language}=S.pre;
+  const {country,dept}=S.user;
+  const words=(prompt||'').split(/\s+/).filter(w=>w.length>4).slice(0,4).join(' ').toLowerCase();
+  const fl=words?` focused on ${words}`:'';
+  return{
+    projectTitle:`Pharmaceutical Company ${build} - ${audience} Hub (${country})`,
+    goal:`Create a clear, engaging ${build.toLowerCase()}${fl} that helps ${audience.toLowerCase()} quickly understand Pharmaceutical Company's offerings, feel confident in the information, and take the next step - whether that's contacting a representative, finding a resource, or learning more.`,
+    audience:`${audience} in ${country}, primarily ${language}-speaking. They range from first-time visitors to returning users. They value clarity, credibility, and ease of use over dense clinical language.`,
+    keyMessages:[
+      'Pharmaceutical Company puts patients at the centre of everything we do.',
+      'Science-led innovation, consistently delivered across all markets.',
+      'Accessible, trustworthy information - built for every user.'
+    ],
+    contentSections:[
+      'Hero - bold headline, one-line description, primary CTA button',
+      'Key benefits - 3 cards highlighting what makes this valuable',
+      'About / Context - who this is for and why it matters',
+      'Supporting content - statistics, testimonials, or resources',
+      'Contact / Next steps - clear call to action'
+    ],
+    toneAndStyle:`Clear, warm, and scientifically credible. Active voice throughout. Human and optimistic - not corporate or cold. Target Grade 8 reading level. Avoid jargon.`,
+    inspiration:`Pharmaceutical Company.com global site for brand reference. Consider clean layouts similar to healthcare.gov or nhs.uk for patient-facing clarity.`
+  };
+}
+
+async function sendPrompt(){
+  if(S.loading)return;
+  const txt=$i('promptTa').value.trim();
+  if(!txt){toast('Enter a prompt first');return;}
+  S.loading=true;
+  $i('pSend').disabled=true;$i('pSend').textContent='Generating…';
+  $i('briefPill').textContent='Generating…';$i('briefPill').className='bb-pill bb-blue';
+  $i('docEmpty')&&($i('docEmpty').style.display='none');
+
+  const sys=`You are a Pharmaceutical Company digital strategist helping a team build a ${S.pre.build} for ${S.pre.audience} in ${S.user.country} (${S.pre.language}).
+Generate an ideation brief. Return ONLY valid JSON - no markdown, no extra keys:
+{
+  "projectTitle": "short descriptive name",
+  "goal": "2-3 sentences: what this page/site achieves and why it matters to the audience",
+  "audience": "who they are, what they need, how they think",
+  "keyMessages": ["message 1","message 2","message 3"],
+  "contentSections": ["Section Name - brief description","Section Name - brief description"],
+  "toneAndStyle": "how it should feel and sound",
+  "inspiration": "suggested references or design approaches"
+}
+Do NOT include compliance flags, SEO keywords, or accessibility notes - those are handled by the review stage.`;
+
+  try{
+    let brief;
+    try{const r=await callAI(sys,txt,1000);brief=JSON.parse(r);}
+    catch(e){if(e.message==='__DEMO__')brief=demoBrief(txt);else throw e;}
+    S.currentBrief=brief;
+    S.briefs.push({time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),data:brief,prompt:txt});
+    renderDoc(brief);updateBVList();
+    const scount=(brief.contentSections||[]).length||0;
+    $i('briefPill').textContent='Draft ready · '+scount+' section'+(scount!==1?'s':'');
+    $i('briefPill').className='bb-pill bb-blue';
+    $i('aiRevBtn').style.display='';$i('confirmBriefBtn').style.display='';
+    // gram/comp pills not shown in brief stage - they belong to review
+    updateWC();
+    toast('Brief generated - edit any field directly','info');
+  }catch(err){toast('Error: '+err.message);$i('docEmpty')&&($i('docEmpty').style.display='');}
+  S.loading=false;$i('pSend').disabled=false;$i('pSend').textContent='Generate Brief';
+}
+
+/* ─── Brief accordion fields (ideation only - no compliance/SEO/a11y) ─── */
+const BRIEF_FIELDS = [
+  {key:'projectTitle',  label:'Project Name',    hint:'What is this project called?',                          maxLen:80,   heading:true},
+  {key:'goal',          label:'Goal & Purpose',  hint:'What should visitors do or feel? What is the purpose?', maxLen:400},
+  {key:'audience',      label:'Target Audience', hint:'Who are they? What do they care about?',                maxLen:300},
+  {key:'keyMessages',   label:'Key Messages',    hint:'The 3–5 things you most want to communicate.',          maxLen:500,  list:true},
+  {key:'contentSections',label:'Page Sections',  hint:'What sections or pages are needed?',                   maxLen:400,  list:true},
+  {key:'toneAndStyle',  label:'Tone & Style',    hint:'How should it feel? (e.g. warm, clinical, bold)',       maxLen:300},
+  {key:'inspiration',   label:'Inspiration',     hint:'Any sites, campaigns or examples you admire?',          maxLen:300},
+];
+
+function renderDoc(brief){
+  const sheet=$i('docSheet');
+  if(!sheet)return;
+  $i('docEmpty').style.display='none';
+
+  sheet.innerHTML = BRIEF_FIELDS.map((f,i) => {
+    let raw = Array.isArray(brief[f.key])
+      ? brief[f.key].join('\n')
+      : (brief[f.key]||'');
+    // map inspiration from brief if not present
+    if(f.key==='inspiration' && !raw) raw = 'Not specified - add any reference sites or campaigns here.';
+    const len = raw.length;
+    const countClass = len > f.maxLen ? 'over' : len > f.maxLen*0.85 ? 'warn' : '';
+    return `
+    <div class="brief-section" id="bsec-${f.key}">
+      <div class="brief-sec-head open" onclick="toggleBriefSec('${f.key}')">
+        <div class="bsh-num">${i+1}</div>
+        <div class="bsh-title">${f.label}</div>
+        <div class="bsh-preview" id="bprev-${f.key}">${esc(raw.slice(0,60))}${raw.length>60?'…':''}</div>
+        <div class="bsh-count" id="bcnt-${f.key}"><span class="${countClass}">${len}</span>/${f.maxLen}</div>
+        <div class="bsh-chevron">▼</div>
+      </div>
+      <div class="brief-sec-body open" id="bbody-${f.key}">
+        <textarea
+          class="brief-ta ${f.heading?'heading-ta':''}"
+          id="bta-${f.key}"
+          placeholder="${f.hint}"
+          oninput="onBriefInput('${f.key}',${f.maxLen},this)"
+          >${esc(raw)}</textarea>
+        <div class="brief-ta-foot"><span id="bfoot-${f.key}" class="${countClass}">${len}/${f.maxLen} characters</span></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // auto-size all textareas
+  sheet.querySelectorAll('.brief-ta').forEach(ta => {
+    ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px';
+  });
+  updateWC();
+}
+
+function toggleBriefSec(key){
+  const head = document.querySelector(`#bsec-${key} .brief-sec-head`);
+  const body = $i('bbody-'+key);
+  const isOpen = body.classList.contains('open');
+  head.classList.toggle('open',!isOpen);
+  body.classList.toggle('open',!isOpen);
+}
+
+function onBriefInput(key, maxLen, ta){
+  ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px';
+  const len = ta.value.length;
+  const cls = len > maxLen ? 'over' : len > maxLen*0.85 ? 'warn' : '';
+  const foot = $i('bfoot-'+key);
+  if(foot){ foot.textContent=len+'/'+maxLen+' characters'; foot.className=cls; }
+  // update preview in header
+  const prev = $i('bprev-'+key);
+  if(prev) prev.textContent = ta.value.slice(0,60)+(ta.value.length>60?'…':'');
+  const cnt = $i('bcnt-'+key);
+  if(cnt) cnt.innerHTML = `<span class="${cls}">${len}</span>/${maxLen}`;
+  updateWC();
+}
+
+function getBriefData(){
+  // Read current values from the accordion textareas
+  const data={};
+  BRIEF_FIELDS.forEach(f=>{
+    const ta=$i('bta-'+f.key);
+    if(ta) data[f.key]=ta.value;
+  });
+  return data;
+}
+
+function updateWC(){
+  let total=0;
+  BRIEF_FIELDS.forEach(f=>{ const ta=$i('bta-'+f.key); if(ta) total+=ta.value.trim().split(/\s+/).filter(Boolean).length; });
+  const sections=BRIEF_FIELDS.filter(f=>{ const ta=$i('bta-'+f.key); return ta&&ta.value.trim().length>0; }).length;
+  $i('wCount').textContent=sections+'/'+BRIEF_FIELDS.length+' sections · '+total+' words';
+}
+
+async function aiReview(){
+  if(S.loading)return;S.loading=true;
+  $i('aiRevBtn').textContent='Reviewing…';$i('aiRevBtn').disabled=true;
+  // Read live values from accordion textareas
+  const liveB=getBriefData();
+  const txt=Object.entries(liveB).map(([k,v])=>`${k}: ${v}`).join('\n\n');
+  const sys=`You are a Pharmaceutical Company brand reviewer. Review this ideation brief for:
+1. Brand voice (Pharmaceutical Company: clear, scientific, optimistic, human-centred)
+2. Clarity and completeness for the stated audience
+3. Any vague, jargon-heavy, or off-brand language
+Return ONLY a JSON array (max 5 items, no markdown):
+[{"field":"fieldName","issue":"concise issue","suggestion":"specific replacement or fix","severity":"high|medium|low"}]`;
+  try{
+    let recs;
+    try{const r=await callAI(sys,txt,600);recs=JSON.parse(r);}
+    catch(e){
+      if(e.message==='__DEMO__') recs=[
+        {field:'toneAndStyle',issue:'Passive voice detected in goal statement',suggestion:'Rewrite as "We deliver…" instead of "…is delivered"',severity:'low'},
+        {field:'complianceFlags',issue:'Cookie consent banner not specified',suggestion:'Add "GDPR cookie banner - OneTrust integration" to requirements',severity:'high'},
+        {field:'keyMessages',issue:'Second message reads as a promotional claim',suggestion:'Add qualifier: "…as evidenced by our clinical trial programme"',severity:'medium'},
+        {field:'audience',issue:'Health literacy level unspecified',suggestion:'State target reading age - recommend Grade 8 / Flesch 60+',severity:'medium'},
+        {field:'accessibilityNotes',issue:'Tab/focus order not defined',suggestion:'Add "Tab order follows visual reading order: left→right, top→bottom"',severity:'low'}
+      ];
+      else throw e;
+    }
+    // Inject tips inline under each relevant accordion section
+    // First clear any previous tips
+    document.querySelectorAll('.brief-ai-tip').forEach(el=>el.remove());
+    let shown=0;
+    recs.forEach(r=>{
+      // Map field name to accordion key (fuzzy match)
+      const matchKey=BRIEF_FIELDS.find(f=>
+        f.key.toLowerCase()===r.field.toLowerCase()||
+        f.label.toLowerCase().includes(r.field.toLowerCase())||
+        r.field.toLowerCase().includes(f.key.toLowerCase())
+      )?.key||null;
+      const body=matchKey?$i('bbody-'+matchKey):null;
+      if(body){
+        // Ensure section is open
+        $i('bbody-'+matchKey).classList.add('open');
+        document.querySelector('#bsec-'+matchKey+' .brief-sec-head')?.classList.add('open');
+        const tip=document.createElement('div');
+        tip.className='brief-ai-tip on';
+        tip.innerHTML=`<strong>${r.severity.toUpperCase()}:</strong> ${esc(r.issue)}<br><span style="color:var(--green);font-weight:600">Fix: </span>${esc(r.suggestion)}`;
+        body.appendChild(tip);
+        shown++;
+      }
+    });
+    $i('briefPill').textContent=shown+' recommendations';
+    $i('briefPill').className='bb-pill bb-amber';
+    toast(shown+' recommendations shown in brief sections');
+  }catch(err){toast('Review error: '+err.message);}
+  S.loading=false;$i('aiRevBtn').textContent='Re-review';$i('aiRevBtn').disabled=false;
+}
+
+function confirmBrief(){
+  // Save current accordion state back into currentBrief
+  const liveData=getBriefData();
+  if(S.currentBrief) Object.assign(S.currentBrief,liveData);
+  else S.currentBrief=liveData;
+  // Parse list fields
+  ['keyMessages','contentSections'].forEach(k=>{
+    if(S.currentBrief[k]&&typeof S.currentBrief[k]==='string'){
+      S.currentBrief[k]=S.currentBrief[k].split('\n').map(l=>l.trim()).filter(Boolean);
+    }
+  });
+  S.briefConfirmed=true;
+  $i('briefPill').textContent='Confirmed';$i('briefPill').className='bb-pill bb-green';
+  $i('confirmBriefBtn').style.display='none';
+  go(3);setTimeout(()=>{if(S.currentBrief)populateCanvas();},300);
+  toast('Brief confirmed - builder ready','ok');
+}
+
+function updateBVList(){
+  $i('bvList').innerHTML=S.briefs.map((v,i)=>`
+    <div class="bv-item" onclick="restoreV(${i})">
+      <div class="bv-time">Version ${i+1} · ${v.time}</div>
+      ${esc((v.data.projectTitle||v.prompt).slice(0,55))}…
+    </div>`).join('');
+}
+function restoreV(i){S.currentBrief=S.briefs[i].data;renderDoc(S.briefs[i].data);toast('Version '+(i+1)+' restored');}
+
+/* ════════════════ BUILDER ════════════════ */
+function btab(el,id){
+  document.querySelectorAll('.bt-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.btab-body').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');$i(id).classList.add('on');
+  if(id==='bt-prev')refreshPreview();
+}
+
+function pickLayout(el,type){
+  document.querySelectorAll('.lay-opt').forEach(o=>o.classList.remove('chosen'));
+  el.classList.add('chosen');S.layout=type;
+  populateCanvas();
+  document.querySelectorAll('.bt-tab')[1].click();
+  setTimeout(()=>{
+    $i('compChk').textContent='Compliance clear';
+    $i('compChk').classList.remove('ck-pulse','ck-info');
+    $i('compChk').classList.add('ck-ok');
+    genLink();
+  },2800);
+  toast('Layout selected - content auto-populated');
+}
+
+function populateCanvas(){
+  const b=S.currentBrief||{};
+  const t=b.projectTitle||`${S.user.firstName||''}'s ${S.pre.build||'Page'}`;
+  const g=b.goal||'Delivering impactful digital experiences.';
+  const km=b.keyMessages||['Innovation at scale','Patient-centred design','Compliance by default'];
+  const cs=b.contentSections||['Introduction','Key Benefits','Call to Action'];
+  const layouts={
+    hero:[{n:'Hero Banner',f:[{l:'Headline',c:'heading',v:t,r:2},{l:'Subheadline',v:g,r:3}]},{n:'Feature Cards',f:km.slice(0,3).map((m,i)=>({l:'Card '+(i+1),v:m,r:3}))},{n:'Call to Action',f:[{l:'CTA Text',v:'Learn how Pharmaceutical Company is transforming healthcare at scale.',r:2}]}],
+    'two-col':[{n:'Main Content',f:[{l:'Section Title',c:'heading',v:t,r:2},{l:'Body',v:g+'\n\n'+cs.join(' - '),r:5}]},{n:'Sidebar Highlights',f:km.map((m,i)=>({l:'Point '+(i+1),v:m,r:2}))}],
+    cards:[{n:'Section Header',f:[{l:'Section Title',c:'heading',v:t,r:2},{l:'Introduction',v:g,r:3}]},{n:'Card 1 - Innovation',f:[{l:'Card Heading',c:'heading',v:km[0]||'Innovation',r:1},{l:'Card Body',v:'At Pharmaceutical Company, science-led innovation drives every decision we make.',r:4}]},{n:'Card 2 - Access',f:[{l:'Card Heading',c:'heading',v:km[1]||'Global Access',r:1},{l:'Card Body',v:'Consistently delivered across all markets and communities worldwide.',r:4}]},{n:'Card 3 - Partnership',f:[{l:'Card Heading',c:'heading',v:km[2]||'Partnership',r:1},{l:'Card Body',v:'Working hand-in-hand with healthcare providers, patients and partners.',r:4}]}],
+    split:[{n:'Left - Content',f:[{l:'Headline',c:'heading',v:t,r:2},{l:'Description',v:g,r:4}]},{n:'Right - Media',f:[{l:'Caption',v:'[Insert visual asset here]',r:2}]}],
+    article:[{n:'Article',f:[{l:'Title',c:'heading',v:t,r:2},{l:'Lead',v:g,r:3},{l:'Body',v:cs.join('\n\n'),r:7}]}],
+    minimal:[{n:'Page Content',f:[{l:'Title',c:'heading',v:t,r:2},{l:'Body',v:g+'\n\n'+km.join('\n'),r:6}]}]
+  };
+  const blocks=layouts[S.layout]||layouts.hero;
+  const ca=$i('canvasArea');
+  ca.innerHTML=blocks.map((blk,bi)=>{
+    const fieldHtml=blk.f.map(f=>{
+      const maxLen=f.c==='heading'?120:800;
+      const val=f.v||'';
+      const cls=val.length>maxLen?'over':val.length>maxLen*0.85?'warn':'';
+      return`<div class="c-field-group">
+        <div class="c-flabel">${f.l}<span class="c-char-count ${cls}" id="cc-cb${bi}-${f.l.replace(/\s+/g,'')}">${val.length}/${maxLen}</span></div>
+        <textarea class="c-edit ${f.c||''}"
+          rows="${f.r||3}"
+          data-max="${maxLen}"
+          oninput="onCanvasInput(this,${bi},'${f.l.replace(/\s+/g,'')}');refreshPreviewD()"
+          >${esc(val)}</textarea>
+      </div>`;
+    }).join('');
+    return`<div class="c-block" id="cb${bi}">
+      <div class="c-bhead" onclick="toggleBlock('cb${bi}')">
+        <div class="c-bname">${blk.n}</div>
+        <span class="c-btoggle">▼</span>
+        <button class="c-del" onclick="event.stopPropagation();this.closest('.c-block').remove();refreshPreviewD()" title="Remove section">✕</button>
+      </div>
+      <div class="c-bbody">${fieldHtml}</div>
+    </div>`;
+  }).join('')+`<button class="add-blk" onclick="addBlk()">+ Add Section</button>`;
+
+  // auto-size all
+  ca.querySelectorAll('textarea').forEach(ta=>{ta.style.height='auto';ta.style.height=Math.max(ta.scrollHeight,ta.rows*24)+'px';});
+}
+
+function toggleBlock(id){
+  const blk=$i(id);
+  if(!blk)return;
+  blk.classList.toggle('collapsed');
+}
+
+function onCanvasInput(ta,bi,fieldKey){
+  ta.style.height='auto';ta.style.height=Math.max(ta.scrollHeight,60)+'px';
+  const max=parseInt(ta.dataset.max)||800;
+  const len=ta.value.length;
+  const cls=len>max?'over':len>max*0.85?'warn':'';
+  const counter=document.getElementById(`cc-cb${bi}-${fieldKey}`);
+  if(counter){counter.textContent=`${len}/${max}`;counter.className=`c-char-count ${cls}`;}
+}
+
+function addBlk(){
+  const ca=$i('canvasArea'),btn=ca.querySelector('.add-blk');
+  const id='cb'+Date.now(),ts=Date.now();
+  const div=document.createElement('div');div.className='c-block';div.id=id;
+  div.innerHTML=`
+    <div class="c-bhead" onclick="toggleBlock('${id}')">
+      <div class="c-bname">New Section</div>
+      <span class="c-btoggle">▼</span>
+      <button class="c-del" onclick="event.stopPropagation();this.closest('.c-block').remove();refreshPreviewD()">✕</button>
+    </div>
+    <div class="c-bbody">
+      <div class="c-field-group">
+        <div class="c-flabel">Section Heading<span class="c-char-count" id="cc-${ts}-Heading">0/120</span></div>
+        <textarea class="c-edit heading" rows="2" data-max="120" placeholder="Section title…"
+          oninput="onCanvasInput(this,'${ts}','Heading');refreshPreviewD()"></textarea>
+      </div>
+      <div class="c-field-group">
+        <div class="c-flabel">Body Content<span class="c-char-count" id="cc-${ts}-Body">0/800</span></div>
+        <textarea class="c-edit" rows="6" data-max="800" placeholder="Write your content here…"
+          oninput="onCanvasInput(this,'${ts}','Body');refreshPreviewD()"></textarea>
+      </div>
+    </div>`;
+  ca.insertBefore(div,btn);
+  div.querySelector('textarea').focus();
+}
+
+let prevT;
+function refreshPreviewD(){clearTimeout(prevT);prevT=setTimeout(refreshPreview,700);}
+
+function refreshPreview(){
+  const blocks=$i('canvasArea')?.querySelectorAll('.c-block')||[];
+  const title=S.currentBrief?.projectTitle||'Pharmaceutical Company';
+  let html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(title)}</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Helvetica Neue',Arial,sans-serif;color:#0F1E2D;background:#fff}
+.nav{background:linear-gradient(90deg,#001A4D,#003087);padding:14px 40px}.nav-logo{color:#fff;font-size:18px;font-weight:700}
+.nav-bar{height:3px;background:linear-gradient(90deg,#0093D0,#003087)}
+.hero{background:linear-gradient(135deg,#003087,#0093D0);color:#fff;padding:64px 48px;text-align:center}
+.hero h1{font-size:2.2em;font-weight:700;margin-bottom:12px}.hero p{font-size:1.05em;opacity:.88;max-width:580px;margin:0 auto 20px}
+.cta-btn{display:inline-block;background:#fff;color:#003087;padding:11px 28px;border-radius:6px;font:700 14px sans-serif}
+.section{padding:48px;max-width:960px;margin:0 auto}.section h2{font-size:1.35em;font-weight:700;color:#003087;margin-bottom:12px}
+.section p{font-size:.97em;line-height:1.75;color:#3A5570;white-space:pre-wrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;padding:48px;max-width:960px;margin:0 auto}
+.card{background:#EBF6FC;border:1px solid #D6EEF9;border-radius:10px;padding:20px}
+.card p{font-size:.92em;line-height:1.65;color:#3A5570;white-space:pre-wrap}
+.footer{background:#003087;color:rgba(255,255,255,.65);text-align:center;padding:22px;font-size:12px;margin-top:48px}
+</style></head><body><div class="nav"><span class="nav-logo">Pharmaceutical Company</span></div><div class="nav-bar"></div>`;
+  let isFirst=true;
+  blocks.forEach(blk=>{
+    const name=blk.querySelector('.c-bname')?.textContent||'';
+    const tas=[...blk.querySelectorAll('textarea')];
+    if(isFirst&&tas.length){
+      html+=`<div class="hero"><h1>${esc(tas[0]?.value||name)}</h1><p>${esc(tas[1]?.value||'')}</p><a class="cta-btn">Learn More</a></div>`;isFirst=false;
+    }else if(name.toLowerCase().includes('card')){
+      html+=`<div class="cards">${tas.map(ta=>`<div class="card"><p>${esc(ta.value)}</p></div>`).join('')}</div>`;
+    }else{
+      html+=`<div class="section">${tas.map((ta,i)=>i===0?`<h2>${esc(ta.value||name)}</h2>`:`<p>${esc(ta.value)}</p>`).join('')}</div>`;
+    }
+  });
+  html+=`<div class="footer">Pharmaceutical Company Inc. · Draft Preview · Not for external distribution</div></body></html>`;
+  const f=$i('previewFrame');if(f)f.srcdoc=html;
+}
+
+function openTab(){
+  const f=$i('previewFrame');if(!f?.srcdoc||f.srcdoc.includes('Build content')){toast('Build content first');return;}
+  const w=window.open('','_blank');w.document.write(f.srcdoc);w.document.close();
+}
+
+function genLink(){
+  const slug=(S.currentBrief?.projectTitle||'project').toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,36);
+  $i('prevUrl').textContent=`pharmaceutical-company-draft.preview/${S.user.emp||'emp'}/${slug}`;
+}
+
+/* ════════════════ REVIEW (full rebuild) ════════════════ */
+async function runReview(){
+  if(S.loading)return;S.loading=true;
+  $i('scoreChip').textContent='Running checks…';$i('scoreChip').className='score-chip sc-warn';
+  $i('scoreVal').textContent='…';
+  $i('proceedSubmitBtn').disabled=true;
+  $i('reRunBtn').style.display='none';
+  $i('compBody').innerHTML='<div style="color:var(--muted);font-size:13px">Checking…</div>';
+  $i('gramBody').innerHTML='<div style="color:var(--muted);font-size:13px">Checking…</div>';
+
+  // Get content from canvas
+  const contentBlocks=[];
+  $i('canvasArea')?.querySelectorAll('.c-block').forEach(blk=>{
+    const name=blk.querySelector('.c-bname')?.textContent||'';
+    blk.querySelectorAll('textarea').forEach(ta=>{if(ta.value.trim())contentBlocks.push({section:name,text:ta.value.trim()});});
+  });
+  const allContent=contentBlocks.map(b=>`[${b.section}]: ${b.text}`).join('\n\n');
+  const briefText=$i('docSheet')?.innerText||'';
+
+  const sys=`You are a Pharmaceutical Company compliance and quality reviewer. Review the following web content.
+Return ONLY valid JSON:
+{
+  "overallScore": 78,
+  "complianceIssues": [
+    {"id":"c1","severity":"high","field":"Hero Banner","contentSnippet":"exact text from content that has the issue (15 words max)","issue":"description","recommendation":"specific fix to apply"}
+  ],
+  "grammarIssues": [
+    {"id":"g1","severity":"medium","field":"Card 1","contentSnippet":"exact text snippet","issue":"description","recommendation":"specific replacement text"}
+  ],
+  "scores": {"compliance":85,"grammar":90,"brandVoice":78,"accessibility":88}
+}
+Severity: high (blocks submission), medium (should fix), low (minor).
+overallScore must reflect weighted average of scores. Be realistic - find real issues.`;
+
+  const userMsg=`BRIEF:\n${briefText}\n\nPAGE CONTENT:\n${allContent||'No content built yet - use placeholder assessment.'}`;
+
+  try{
+    let data;
+    try{const r=await callAI(sys,userMsg,1200);data=JSON.parse(r);}
+    catch(e){
+      if(e.message==='__DEMO__') data={
+        overallScore:76,
+        complianceIssues:[
+          {id:'c1',severity:'high',field:'Hero Banner',contentSnippet:'Advancing Health for Patients',issue:'Headline could be interpreted as an unsubstantiated medical claim',recommendation:'Change to "Supporting Patients on Their Health Journey" - removes implication of direct health improvement'},
+          {id:'c2',severity:'medium',field:'Footer',contentSnippet:'Pharmaceutical Company Inc. Draft Preview',issue:'Regulatory disclaimer missing from footer',recommendation:'Add: "For Healthcare Professional use only. This page is subject to regulatory review before publication."'},
+          {id:'c3',severity:'low',field:'Navigation Bar',contentSnippet:'Learn More',issue:'CTA text is not descriptive enough for screen readers',recommendation:'Change to "Learn more about Pharmaceutical Company patient programmes" for WCAG 2.4.6 compliance'}
+        ],
+        grammarIssues:[
+          {id:'g1',severity:'medium',field:'Key Benefits',contentSnippet:'Science-led, consistently delivered across all markets.',issue:'Sentence fragment - missing subject',recommendation:'Rewrite as: "Our science-led approach ensures consistent delivery across all markets."'},
+          {id:'g2',severity:'low',field:'Hero Banner',contentSnippet:'everything we do',issue:'Grade 9 reading level - too complex for patient audience',recommendation:'Simplify to: "We put patients first in everything." - targets Grade 7 reading level'}
+        ],
+        scores:{compliance:74,grammar:84,brandVoice:80,accessibility:70}
+      };
+      else throw e;
+    }
+    S.reviewData=data;
+    S.reviewDecisions={};
+    renderReview(data);
+    populateRecPanel(data);
+    $i('reRunBtn').style.display='';
+  }catch(err){
+    $i('scoreChip').textContent='Check failed';
+    toast('Review error: '+err.message);
+  }
+  S.loading=false;
+}
+
+/* PIE INTEGRATION */
+async function runPIE(){
+  if(S.loading) return; S.loading=true;
+  
+  $i('scoreChip').textContent='Running PIE…';
+  $i('scoreChip').className='score-chip sc-info';
+  
+  try {
+    const brief = $i('briefTa')?.textContent || 'Brief missing';  // Adjust ID
+    
+    const pie = await fetch('/api/classify', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({brief, dept: 'CXI+AI', country: 'Global'})
+    }).then(r=>r.json());
+    
+    $i('scoreChip').textContent=`PIE ${pie.piegrade} (${pie.piescore}/100)`;
+    $i('scoreChip').className=`score-chip ${pie.piegrade==='A'?'sc-pass':'sc-warn'}`;
+    
+    $i('compBody').innerHTML=`
+      <div><strong>Audience:</strong> ${pie.audience.audience} (${pie.audience.confidence})</div>
+      <div><strong>Risk:</strong> ${pie.risk.level} ${pie.risk.level==='CENSORED'?'🚫':''}</div>
+      <div><strong>Tone:</strong> ${pie.tone.label}</div>
+      <div><strong>Readability:</strong> Grade ${pie.readability.predicted_grade}</div>
+    `;
+    
+  } catch(e) {
+    $i('compBody').innerHTML=`<div style="color:var(--red)">PIE error: ${e}</div>`;
+  }
+  
+  S.loading=false;
+}
+
+/* PIE INTEGRATION */
+
+function renderReview(data){
+  const score=data.overallScore||0;
+
+  // Score ring
+  const circumference=188;
+  const offset=circumference-(circumference*score/100);
+  $i('scoreArc').style.strokeDashoffset=offset;
+  $i('scoreArc').style.stroke=score>=SCORE_THRESHOLD?'var(--green)':score>=70?'var(--amber)':'var(--red)';
+  $i('scoreVal').textContent=score+'%';
+
+  // Score info
+  const pass=score>=SCORE_THRESHOLD;
+  $i('scoreChip').textContent=pass?'Passed - '+score+'%':'Needs work - '+score+'%';
+  $i('scoreChip').className='score-chip '+(pass?'sc-pass':'sc-fail');
+  $i('rsiTitle').textContent=pass?'Ready for submission':'Revisions required before submission';
+  $i('rsiSub').textContent=pass?'All checks passed. You may proceed to submit.':'Score is below the 90% threshold. Accept the highlighted recommendations below to improve your score.';
+
+  // Score bars
+  const sc=data.scores||{};
+  $i('rsiBars').innerHTML=Object.entries(sc).map(([k,v])=>`
+    <div class="rsi-bar-row">
+      <span class="rsi-bar-lbl">${k.charAt(0).toUpperCase()+k.slice(1).replace(/([A-Z])/g,' $1')}</span>
+      <div class="rsi-bar"><div class="rsi-bar-fill" style="width:${v}%;background:${v>=90?'var(--green)':v>=70?'var(--amber)':'var(--red)'}"></div></div>
+      <span class="rsi-bar-v">${v}%</span>
+    </div>`).join('');
+
+  // Threshold warning
+  $i('threshWarn').classList.toggle('on',!pass);
+  $i('proceedSubmitBtn').disabled=!pass;
+
+  // Render issues
+  renderIssueSection('compBody','compCount',data.complianceIssues||[],'compliance');
+  renderIssueSection('gramBody','gramCount',data.grammarIssues||[],'grammar');
+  renderReviewPreview(data);
+}
+
+function renderIssueSection(bodyId,countId,issues,type){
+  const body=$i(bodyId),cnt=$i(countId);
+  const open=issues.filter(i=>!S.reviewDecisions[i.id]);
+  cnt.textContent=open.length>0?open.length+' issue'+(open.length>1?'s':''):'All clear';
+  cnt.className='rev-sec-count'+(open.length===0?' ok':'');
+  if(issues.length===0){body.innerHTML='<div style="color:var(--green);font-size:13px;font-weight:600">No issues found ✓</div>';return;}
+  body.innerHTML=issues.map(item=>{
+    const dec=S.reviewDecisions[item.id];
+    return`<div class="rev-issue ${dec||''}" id="ri-${item.id}">
+      <div class="rev-issue-head ${item.severity}">
+        <span class="rii-sev ${item.severity}">${item.severity}</span>
+        <div class="rii-info">
+          <div class="rii-field">${esc(item.field)}</div>
+          <div class="rii-issue">${esc(item.issue)}</div>
+        </div>
+      </div>
+      ${dec?`<div class="rev-issue-body"><div class="rev-done-msg ${dec==='declined'?'declined':''}">${dec==='approved'?'✓ Recommendation accepted and applied':'✕ Recommendation declined'}</div></div>`:`
+      <div class="rev-issue-body">
+        <div class="rec-label">Content to review</div>
+        <div class="content-preview"><mark class="${item.severity}">${esc(item.contentSnippet)}</mark></div>
+        <div class="rec-label">Recommendation</div>
+        <div class="rec-text">${esc(item.recommendation)}</div>
+        <div class="rev-btns">
+          <button class="rev-accept" onclick="acceptRec('${item.id}','${type}')">Accept &amp; Apply</button>
+          <button class="rev-decline" onclick="declineRec('${item.id}','${type}')">Decline</button>
+        </div>
+      </div>`}
+    </div>`;
+  }).join('');
+}
+
+function acceptRec(id,type){
+  S.reviewDecisions[id]='approved';
+  // Apply the recommendation: find field in canvas and update
+  const item=[...(S.reviewData?.complianceIssues||[]),...(S.reviewData?.grammarIssues||[])].find(i=>i.id===id);
+  if(item){
+    // Find and update matching textarea
+    $i('canvasArea')?.querySelectorAll('textarea').forEach(ta=>{
+      if(ta.value.includes(item.contentSnippet.slice(0,20))){
+        ta.value=ta.value.replace(item.contentSnippet,item.recommendation);
+        ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';
+      }
+    });
+    refreshPreviewD();
+  }
+  recalcScore();
+  const sectionId=type==='compliance'?'compBody':'gramBody';
+  const countId=type==='compliance'?'compCount':'gramCount';
+  const issues=type==='compliance'?S.reviewData.complianceIssues:S.reviewData.grammarIssues;
+  renderIssueSection(sectionId,countId,issues,type);
+  populateRecPanel(S.reviewData);
+  renderReviewPreview(S.reviewData);
+  toast('Change applied ✓','ok');
+}
+
+function declineRec(id,type){
+  S.reviewDecisions[id]='declined';
+  const sectionId=type==='compliance'?'compBody':'gramBody';
+  const countId=type==='compliance'?'compCount':'gramCount';
+  const issues=type==='compliance'?S.reviewData.complianceIssues:S.reviewData.grammarIssues;
+  renderIssueSection(sectionId,countId,issues,type);
+  populateRecPanel(S.reviewData);
+  renderReviewPreview(S.reviewData);
+  toast('Recommendation declined');
+}
+
+function recalcScore(){
+  if(!S.reviewData)return;
+  const allItems=[...(S.reviewData.complianceIssues||[]),...(S.reviewData.grammarIssues||[])];
+  const approved=allItems.filter(i=>S.reviewDecisions[i.id]==='approved').length;
+  const highFix=allItems.filter(i=>i.severity==='high'&&S.reviewDecisions[i.id]==='approved').length;
+  const boost=Math.round(approved*3+highFix*4);
+  const newScore=Math.min(100,S.reviewData.overallScore+boost);
+  // Update ring
+  const circumference=188;
+  $i('scoreArc').style.strokeDashoffset=circumference-(circumference*newScore/100);
+  $i('scoreArc').style.stroke=newScore>=SCORE_THRESHOLD?'var(--green)':newScore>=70?'var(--amber)':'var(--red)';
+  $i('scoreVal').textContent=newScore+'%';
+  const pass=newScore>=SCORE_THRESHOLD;
+  $i('scoreChip').textContent=pass?'Passed - '+newScore+'%':'Needs work - '+newScore+'%';
+  $i('scoreChip').className='score-chip '+(pass?'sc-pass':'sc-fail');
+  $i('rsiTitle').textContent=pass?'Ready for submission':'Revisions required - keep accepting recommendations';
+  $i('threshWarn').classList.toggle('on',!pass);
+  $i('proceedSubmitBtn').disabled=!pass;
+}
+
+function revTab(el,id){
+  document.querySelectorAll('.rev-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.rev-tab-body').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');$i(id).classList.add('on');
+}
+
+function renderReviewPreview(data){
+  /* Build full content view with issues highlighted inline */
+  const container=$i('revPreviewContent');
+  if(!container)return;
+  const allItems=[...(data.complianceIssues||[]),...(data.grammarIssues||[])];
+  const pending=allItems.filter(i=>!S.reviewDecisions[i.id]);
+
+  if(pending.length===0){
+    container.innerHTML='<div style="color:var(--green);font-size:14px;font-weight:600;text-align:center;padding:32px">All issues resolved ✓</div>';
+    return;
+  }
+
+  // Collect all canvas content blocks
+  const blocks=[];
+  $i('canvasArea')?.querySelectorAll('.c-block').forEach(blk=>{
+    const name=blk.querySelector('.c-bname')?.textContent||'';
+    blk.querySelectorAll('textarea').forEach(ta=>{
+      if(ta.value.trim()) blocks.push({section:name,text:ta.value.trim()});
+    });
+  });
+
+  if(blocks.length===0){
+    container.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center;padding:32px">No content in builder yet - add content in the Builder step.</div>';
+    return;
+  }
+
+  container.innerHTML=blocks.map(blk=>{
+    let text=esc(blk.text);
+    // Highlight snippets that match pending issues
+    pending.forEach(item=>{
+      if(!item.contentSnippet)return;
+      const escaped=esc(item.contentSnippet);
+      const highlighted=`<mark class="rev-${item.severity}" title="${esc(item.issue)} - Fix: ${esc(item.recommendation)}">${escaped}</mark>`;
+      text=text.replace(escaped,highlighted);
+    });
+    return`<div class="rpd-section">
+      <div class="rpd-section-name">${esc(blk.section)}</div>
+      <div class="rpd-content">${text}</div>
+    </div>`;
+  }).join('');
+}
+
+function populateRecPanel(data){
+  const panel=$i('recPanel');
+  const all=[...(data.complianceIssues||[]),...(data.grammarIssues||[])];
+  if(all.length===0){panel.innerHTML='<div class="rec-empty">No recommendations - all checks passed!</div>';return;}
+  $i('recEmpty')&&($i('recEmpty').style.display='none');
+  panel.innerHTML=all.map(item=>{
+    const dec=S.reviewDecisions[item.id];
+    const type=data.complianceIssues?.find(i=>i.id===item.id)?'compliance':'grammar';
+    return`<div class="rec-item ${item.severity} ${dec||''}" id="rp-${item.id}">
+      <div class="ri-top">
+        <span class="ri-sev ${item.severity}">${item.severity}</span>
+        <span class="ri-field">${esc(item.field)}</span>
+      </div>
+      <div class="ri-issue">${esc(item.issue)}</div>
+      <div class="ri-fix">${esc(item.recommendation)}</div>
+      ${dec?`<div class="ri-status ${dec==='approved'?'ok':'no'}">${dec==='approved'?'✓ Applied':'✕ Declined'}</div>`:`
+      <div class="ri-actions">
+        <button class="ri-accept" onclick="acceptRec('${item.id}','${type}');rtab($i('rtt-recs'),'rtp-recs')">Accept</button>
+        <button class="ri-decline" onclick="declineRec('${item.id}','${type}');rtab($i('rtt-recs'),'rtp-recs')">Decline</button>
+      </div>`}
+    </div>`;
+  }).join('');
+}
+
+/* ════════════════ FILE UPLOADS ════════════════ */
+function handleDrop(e){
+  e.preventDefault();$i('dropZone').classList.remove('drag');
+  handleFiles(e.dataTransfer.files);
+}
+function handleFiles(files){
+  [...files].forEach(f=>{
+    const id='f'+Date.now()+Math.random().toString(36).slice(2);
+    S.uploadedFiles.push({id,file:f,name:f.name,description:'',type:getFileType(f.name)});
+    renderFileCard(id,f);
+  });
+}
+function getFileType(name){
+  const ext=name.split('.').pop().toLowerCase();
+  if(['png','jpg','jpeg','gif','webp'].includes(ext))return'image';
+  if(ext==='pdf')return'pdf';
+  return'doc';
+}
+function fileIcon(type){return type==='image'?'🖼️':type==='pdf'?'📄':'📝'}
+function formatSize(b){return b<1024?b+'B':b<1048576?Math.round(b/1024)+'KB':Math.round(b/1048576)+'MB'}
+
+function renderFileCard(id,file){
+  const list=$i('fileList');
+  const div=document.createElement('div');div.className='file-card';div.id='fc-'+id;
+  const type=getFileType(file.name);
+  div.innerHTML=`
+    <div class="fc-top">
+      <div class="fc-icon">${fileIcon(type)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="fc-name">${esc(file.name)}</div>
+        <div class="fc-size">${formatSize(file.size)}</div>
+      </div>
+      <button class="fc-del" onclick="removeFile('${id}')" title="Remove">✕</button>
+    </div>
+    <div class="fc-field">
+      <div class="fc-label">Title</div>
+      <input class="fc-input" placeholder="Give this file a title…" oninput="updateFileMeta('${id}','name',this.value)" value="${esc(file.name.replace(/\.[^.]+$/,''))}"/>
+    </div>
+    <div class="fc-field">
+      <div class="fc-label">Description</div>
+      <textarea class="fc-input ta" placeholder="What is this file? How should it be used?" oninput="updateFileMeta('${id}','description',this.value)"></textarea>
+    </div>`;
+  list.appendChild(div);
+  toast(file.name+' uploaded','ok');
+}
+function removeFile(id){
+  S.uploadedFiles=S.uploadedFiles.filter(f=>f.id!==id);
+  $i('fc-'+id)?.remove();
+}
+function updateFileMeta(id,field,val){
+  const f=S.uploadedFiles.find(f=>f.id===id);if(f)f[field]=val;
+}
+
+/* ════════════════ SUBMIT ════════════════ */
+function buildSubMeta(){
+  $i('subMeta').innerHTML=[
+    ['Name',S.user.firstName+' '+S.user.lastName],
+    ['Email',S.user.email||'-'],['Employee',S.user.emp||'-'],
+    ['Department',S.user.dept||'-'],['Country',S.user.country||'-'],
+    ['Build Type',S.pre.build||'-']
+  ].map(([l,v])=>`<div class="sm-box"><div class="sm-l">${l}</div><div class="sm-v">${esc(v)}</div></div>`).join('');
+}
+
+function finalSubmit(){
+  S.submitted=true;
+  // Lock entire UI
+  $i('lsbNav').style.display='none';
+  $i('lsbLocked').classList.add('on');
+  $i('llEmail').textContent=S.user.email||'your registered email';
+  // Disable all nav items
+  for(let i=0;i<=5;i++){const el=$i('ni'+i);if(el)el.classList.add('locked');}
+  // Disable submit button
+  $i('subBtn').disabled=true;$i('subBtn').textContent='Submitted - awaiting review';
+  save();
+  toast('Submitted! You will receive an email update at '+S.user.email,'ok');
+}
+
+/* ════════════════ RIGHT TABS ════════════════ */
+function rtab(el,id){
+  document.querySelectorAll('.rtab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.rpanel').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');$i(id).classList.add('on');
+}
+
+/* ════════════════ SAVE / LOAD ════════════════ */
+function save(){
+  const d={user:S.user,pre:S.pre,briefs:S.briefs,step:S.step,maxStep:S.maxStep,
+    note:$i('notepad').value,submitted:S.submitted,ts:new Date().toISOString()};
+  localStorage.setItem('pharmaceutical_company_dta_v5',JSON.stringify(d));
+  const ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  $i('saveTs').textContent='Saved '+ts;
+  toast('Session saved','ok');
+}
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem('pharmaceutical_company_dta_v5'));
+    if(!d){toast('No saved session found');return;}
+    S.user=d.user||{};S.pre=d.pre||S.pre;S.briefs=d.briefs||[];
+    S.maxStep=d.maxStep||0;S.submitted=d.submitted||false;
+    if(S.user.firstName){
+      $i('hdrUser').classList.add('on');
+      $i('hdrAv').textContent=(S.user.firstName[0]+(S.user.lastName||'')[0]||'').toUpperCase();
+      $i('hdrName').textContent=S.user.firstName;
+      $i('lsbUser').classList.add('on');
+      $i('lsbName').textContent=S.user.firstName+' '+S.user.lastName;
+      $i('lsbMeta').innerHTML=S.user.dept+'<br>'+S.user.emp+' · '+S.user.country;
+      $i('pbUser').style.display='';$i('pbUserVal').textContent=S.user.firstName+' '+S.user.lastName;
+    }
+    if(S.pre.build){
+      [$i('pbBuild'),$i('pbAud'),$i('pbReg'),$i('pbLang')].forEach(el=>el&&(el.style.display=''));
+      $i('pbBuildVal').textContent=S.pre.build;$i('pbAudVal').textContent=S.pre.audience;
+      $i('pbRegVal').textContent=S.user.country;$i('pbLangVal').textContent=S.pre.language;
+      $i('ctxB').textContent=S.pre.build;$i('ctxA').textContent=S.pre.audience;
+      $i('ctxR').textContent=S.user.country;$i('ctxL').textContent=S.pre.language;
+      $i('ctxBar').classList.add('on');
+    }
+    if(d.note)$i('notepad').value=d.note;
+    if(S.briefs.length)S.currentBrief=S.briefs[S.briefs.length-1].data;
+    updateBVList();
+    const ts=d.ts?new Date(d.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'-';
+    $i('saveTs').textContent='Last: '+ts;
+    if(S.submitted){$i('lsbNav').style.display='none';$i('lsbLocked').classList.add('on');$i('llEmail').textContent=S.user.email||'your email';}
+    go(Math.min(d.step||0,S.maxStep));
+    toast('Welcome back, '+(S.user.firstName||'')+'!','info');
+  }catch(e){toast('Could not load: '+e.message);}
+}
+
+/* ════════════════ NOTEPAD ════════════════ */
+$i('notepad').addEventListener('input',()=>{
+  $i('nCount').textContent=$i('notepad').value.length+' characters';
+  localStorage.setItem('pharmaceutical_company_dta_note',$i('notepad').value);
+});
+const sn=localStorage.getItem('pharmaceutical_company_dta_note');
+if(sn){$i('notepad').value=sn;$i('nCount').textContent=sn.length+' characters';}
+</script>
+</body>
+</html>

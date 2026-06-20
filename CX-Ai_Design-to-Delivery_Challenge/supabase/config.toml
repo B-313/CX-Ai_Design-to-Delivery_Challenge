@@ -1,0 +1,26 @@
+project_id = "your-project-id"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[functions.analyze-brief]
+verify_jwt = false
+
+[functions.pie-classify]
+verify_jwt = false
+
+[functions.generate-brief]
+verify_jwt = false
+
+[functions.review-content]
+verify_jwt = false
+
+[functions.notify-reviewer]
+verify_jwt = false
+
+[functions.enrich-content]
+verify_jwt = false

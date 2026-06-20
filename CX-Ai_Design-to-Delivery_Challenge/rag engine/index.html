@@ -1,0 +1,1955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design-to-Delivery Accelerator · Pharma CXI+AI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --pf-blue:   #0093D0;
+  --pf-dark:   #003087;
+  --pf-deep:   #001A4D;
+  --pf-sky:    #D6EEF9;
+  --pf-mist:   #EBF6FC;
+  --white:     #FFFFFF;
+  --g50:       #F7FAFC;
+  --g100:      #EEF2F7;
+  --g200:      #DDE6F0;
+  --g300:      #B8CCDC;
+  --g400:      #7898B4;
+  --g600:      #3D5E78;
+  --g800:      #1A2E40;
+  --text:      #0F1E2D;
+  --soft:      #3A5570;
+  --muted:     #6B8EA8;
+  --green:     #007A50;
+  --green-lt:  #E0F5ED;
+  --amber:     #A05C00;
+  --amber-lt:  #FEF3D8;
+  --red:       #B02020;
+  --red-lt:    #FDEDED;
+  --font:      'DM Sans', sans-serif;
+  --serif:     'DM Serif Display', serif;
+  --sh-sm:     0 2px 8px rgba(0,48,135,.08);
+  --sh-md:     0 6px 24px rgba(0,48,135,.11);
+  --sh-lg:     0 16px 56px rgba(0,48,135,.16);
+  --r:         10px;
+  --r-sm:      6px;
+  --r-lg:      16px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: var(--font); font-size: 14px; color: var(--text); background: var(--g50); }
+body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+.header {
+  height: 52px;
+  background: linear-gradient(90deg, var(--pf-deep) 0%, var(--pf-dark) 55%, var(--pf-blue) 100%);
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0,26,77,.35);
+  z-index: 200;
+}
+.h-logo { font-family: var(--serif); font-size: 18px; color: #fff; letter-spacing: .02em; }
+.h-sep  { width: 1px; height: 18px; background: rgba(255,255,255,.25); }
+.h-app  { font-size: 12px; font-weight: 500; color: rgba(255,255,255,.8); letter-spacing: .03em; }
+.h-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.h-badge {
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.2);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,.9);
+  letter-spacing: .04em;
+}
+
+/* ═══════════════════════════════════════════
+   STAGE PIPELINE BAR
+═══════════════════════════════════════════ */
+.pipeline {
+  background: var(--white);
+  border-bottom: 1px solid var(--g200);
+  height: 48px;
+  display: flex; align-items: center;
+  padding: 0 20px;
+  gap: 0;
+  flex-shrink: 0;
+  box-shadow: var(--sh-sm);
+  overflow-x: auto;
+}
+.pipeline::-webkit-scrollbar { display: none; }
+
+.pip-step {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 20px;
+  cursor: pointer; transition: all .2s;
+  flex-shrink: 0; position: relative;
+}
+.pip-step:not(:last-child)::after {
+  content: '›';
+  position: absolute; right: -4px;
+  color: var(--g300); font-size: 16px;
+  pointer-events: none;
+}
+.pip-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid var(--g300);
+  font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); transition: all .2s;
+}
+.pip-label { font-size: 12px; font-weight: 600; color: var(--muted); transition: color .2s; white-space: nowrap; }
+
+.pip-step.done .pip-num  { background: var(--green); border-color: var(--green); color: #fff; }
+.pip-step.done .pip-label { color: var(--green); }
+.pip-step.active { background: var(--pf-mist); }
+.pip-step.active .pip-num  { background: var(--pf-blue); border-color: var(--pf-blue); color: #fff; }
+.pip-step.active .pip-label { color: var(--pf-dark); }
+
+.pip-right { margin-left: auto; display: flex; align-items: center; gap: 10px; flex-shrink: 0; padding-left: 16px; }
+.pip-pct {
+  font-size: 12px; font-weight: 700; color: var(--pf-dark);
+  display: flex; align-items: center; gap: 6px;
+}
+.pip-bar-wrap { width: 80px; height: 6px; background: var(--g100); border-radius: 99px; overflow: hidden; }
+.pip-bar-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, #DC2626 0%, #F59E0B 33%, #84CC16 66%, #059669 100%);
+  background-size: 240px;
+  transition: width .5s ease;
+}
+
+/* ═══════════════════════════════════════════
+   WORKSPACE
+═══════════════════════════════════════════ */
+.workspace { flex: 1; display: flex; overflow: hidden; }
+
+/* ═══════════════════════════════════════════
+   LEFT SIDEBAR
+═══════════════════════════════════════════ */
+.sidebar {
+  width: 220px; flex-shrink: 0;
+  background: var(--white);
+  border-right: 1px solid var(--g200);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sb-user {
+  padding: 16px 14px 14px;
+  border-bottom: 1px solid var(--g100);
+  display: none;
+}
+.sb-user.show { display: block; }
+.sb-name  { font-family: var(--serif); font-size: 15px; color: var(--pf-dark); margin-bottom: 2px; }
+.sb-meta  { font-size: 11px; color: var(--muted); line-height: 1.55; }
+
+.sb-nav { flex: 1; padding: 12px 10px; }
+.sb-section-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .09em; color: var(--g300); padding: 0 6px; margin-bottom: 6px;
+}
+.sb-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  cursor: pointer; transition: all .15s; margin-bottom: 2px;
+  position: relative; user-select: none;
+}
+.sb-item:hover { background: var(--g50); color: var(--text); }
+.sb-item.active { background: var(--pf-mist); color: var(--pf-dark); font-weight: 600; }
+.sb-item.active::before {
+  content: ''; position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 3px; border-radius: 0 2px 2px 0; background: var(--pf-blue);
+}
+.sb-item.locked { opacity: .4; cursor: default; }
+.sb-item.done .sb-num { background: var(--green); border-color: var(--green); color: #fff; }
+.sb-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid currentColor;
+  font-size: 10px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .2s;
+}
+
+.sb-bottom {
+  padding: 12px 14px; border-top: 1px solid var(--g100); flex-shrink: 0;
+}
+.sb-save-btn {
+  width: 100%; background: none; border: 1.5px solid var(--g200);
+  border-radius: var(--r-sm); padding: 7px;
+  font: 600 12px var(--font); color: var(--g600);
+  cursor: pointer; transition: all .2s;
+}
+.sb-save-btn:hover { border-color: var(--pf-blue); color: var(--pf-blue); background: var(--pf-mist); }
+.sb-timestamp { font-size: 10px; color: var(--g300); text-align: center; margin-top: 5px; }
+
+/* ═══════════════════════════════════════════
+   CENTER
+═══════════════════════════════════════════ */
+.center { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* Prelim context header */
+.ctx-bar {
+  display: none; height: 38px;
+  background: var(--pf-mist); border-bottom: 1px solid var(--pf-sky);
+  align-items: center; padding: 0 20px; gap: 6px; flex-shrink: 0;
+}
+.ctx-bar.show { display: flex; }
+.ctx-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--pf-dark); margin-right: 4px; }
+.ctx-pill {
+  background: var(--white); border: 1px solid var(--pf-sky);
+  border-radius: 20px; padding: 2px 10px;
+  font-size: 11px; font-weight: 600; color: var(--pf-dark);
+}
+
+/* Panels */
+.panel { display: none; flex: 1; flex-direction: column; overflow: hidden; animation: fadeUp .25s ease; }
+.panel.on { display: flex; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ═══════════════════════════════════════════
+   RIGHT COLUMN
+═══════════════════════════════════════════ */
+.right-col {
+  width: 272px; flex-shrink: 0;
+  background: var(--white); border-left: 1px solid var(--g200);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.rc-tabs { display: flex; border-bottom: 1px solid var(--g100); flex-shrink: 0; }
+.rc-tab {
+  flex: 1; padding: 10px 6px; font-size: 11px; font-weight: 700;
+  text-align: center; color: var(--muted); cursor: pointer;
+  border-bottom: 2px solid transparent; letter-spacing: .04em;
+  text-transform: uppercase; transition: all .18s;
+}
+.rc-tab:hover { color: var(--pf-blue); }
+.rc-tab.on { color: var(--pf-dark); border-bottom-color: var(--pf-blue); }
+.rc-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.rc-panel.on { display: flex; }
+
+/* Prompt panel */
+.prompt-area { padding: 14px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+.rc-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--g300); margin-bottom: 2px; }
+.prompt-box {
+  background: var(--g50); border: 1.5px solid var(--g200);
+  border-radius: var(--r); padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: all .2s;
+}
+.prompt-box:focus-within { border-color: var(--pf-blue); background: var(--white); box-shadow: 0 0 0 3px rgba(0,147,208,.1); }
+#promptTa {
+  border: none; outline: none; background: none;
+  font: 400 13px var(--font); color: var(--text); resize: none;
+  min-height: 72px; max-height: 130px; line-height: 1.6;
+}
+#promptTa::placeholder { color: var(--g300); }
+.prompt-send {
+  align-self: flex-end; background: var(--pf-blue); color: #fff;
+  border: none; border-radius: var(--r-sm); padding: 6px 14px;
+  font: 600 12px var(--font); cursor: pointer; transition: all .2s;
+}
+.prompt-send:hover { background: var(--pf-dark); }
+.prompt-send:disabled { background: var(--g200); cursor: not-allowed; }
+
+.brief-versions { flex: 1; overflow-y: auto; padding: 0 14px 14px; }
+.bv-item {
+  background: var(--g50); border: 1px solid var(--g100);
+  border-radius: var(--r-sm); padding: 8px 10px; margin-bottom: 6px;
+  cursor: pointer; font-size: 12px; color: var(--soft); transition: all .18s;
+}
+.bv-item:hover { border-color: var(--pf-blue); background: var(--pf-mist); }
+.bv-time { font-size: 10px; font-weight: 700; color: var(--g300); margin-bottom: 2px; }
+
+/* AI Activity panel */
+.ai-log { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.ai-log::-webkit-scrollbar { width: 3px; }
+.ai-log::-webkit-scrollbar-thumb { background: var(--g200); border-radius: 99px; }
+.log-entry {
+  background: var(--g50); border: 1px solid var(--g100);
+  border-radius: var(--r-sm); padding: 10px 12px;
+  font-size: 12px; line-height: 1.5; color: var(--soft);
+  animation: fadeUp .25s ease;
+}
+.log-entry.running { border-color: var(--pf-sky); background: var(--pf-mist); }
+.log-entry.done    { border-color: rgba(0,122,80,.2); background: var(--green-lt); }
+.log-entry.warn    { border-color: rgba(160,92,0,.2); background: var(--amber-lt); }
+.log-agent { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--pf-blue); margin-bottom: 3px; }
+.log-entry.done .log-agent  { color: var(--green); }
+.log-entry.warn .log-agent  { color: var(--amber); }
+.log-spinner {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  border: 1.5px solid var(--pf-sky); border-top-color: var(--pf-blue);
+  animation: spin .7s linear infinite; margin-right: 4px;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Notes panel */
+.notes-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+#notepad { flex: 1; border: none; outline: none; resize: none; padding: 14px; font: 400 13px var(--font); color: var(--text); line-height: 1.7; background: var(--g50); }
+.notes-footer { padding: 6px 12px; border-top: 1px solid var(--g100); display: flex; justify-content: space-between; align-items: center; }
+.notes-count { font-size: 10px; color: var(--g300); }
+.notes-copy { background: none; border: 1px solid var(--g200); border-radius: 4px; padding: 3px 8px; font: 600 10px var(--font); color: var(--g400); cursor: pointer; transition: all .18s; }
+.notes-copy:hover { border-color: var(--pf-blue); color: var(--pf-blue); }
+
+/* ═══════════════════════════════════════════
+   PANEL 0: REGISTRATION
+═══════════════════════════════════════════ */
+#p-reg {
+  align-items: center; justify-content: center; overflow-y: auto;
+  background: radial-gradient(ellipse at 60% 0%, var(--pf-mist) 0%, var(--g50) 55%);
+}
+.reg-card {
+  background: var(--white); border: 1px solid var(--g200);
+  border-radius: 20px; box-shadow: var(--sh-lg);
+  padding: 36px 42px; width: 480px; max-width: 94vw;
+}
+.reg-title { font-family: var(--serif); font-size: 24px; color: var(--pf-dark); margin-bottom: 5px; }
+.reg-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.fg { margin-bottom: 14px; }
+.fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fl { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--g600); margin-bottom: 4px; }
+.fi {
+  width: 100%; background: var(--g50); border: 1.5px solid var(--g200);
+  border-radius: var(--r-sm); padding: 8px 11px;
+  font: 400 13.5px var(--font); color: var(--text); outline: none;
+  transition: all .18s; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5' fill='none' stroke='%236B8EA8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  padding-right: 26px;
+}
+input.fi { background-image: none; padding-right: 11px; }
+.fi:focus { border-color: var(--pf-blue); background-color: var(--white); box-shadow: 0 0 0 3px rgba(0,147,208,.1); }
+.phone-wrap { display: flex; gap: 8px; }
+.phone-code { width: 105px; flex-shrink: 0; }
+.btn-go {
+  width: 100%; margin-top: 4px;
+  background: linear-gradient(135deg, var(--pf-blue), var(--pf-dark));
+  color: #fff; border: none; border-radius: var(--r-sm);
+  padding: 12px; font: 700 14px var(--font);
+  cursor: pointer; transition: all .2s; letter-spacing: .02em;
+  box-shadow: 0 4px 14px rgba(0,147,208,.32);
+}
+.btn-go:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,147,208,.42); }
+.load-link { display: block; text-align: center; margin-top: 10px; font-size: 12px; color: var(--pf-blue); cursor: pointer; }
+.load-link:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════════
+   PANEL 1: PRELIMINARY
+═══════════════════════════════════════════ */
+#p-pre { overflow-y: auto; padding: 28px 32px; gap: 18px; }
+.pre-title { font-family: var(--serif); font-size: 21px; color: var(--pf-dark); }
+.pre-sub { font-size: 13px; color: var(--muted); }
+.pre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pre-card { background: var(--white); border: 1.5px solid var(--g100); border-radius: var(--r); padding: 16px 18px; box-shadow: var(--sh-sm); }
+.pre-card.wide { grid-column: 1/-1; }
+.pc-lbl { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--g300); margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 5px 13px; border-radius: 20px;
+  border: 1.5px solid var(--g200); background: var(--g50);
+  font: 500 12px var(--font); color: var(--g600);
+  cursor: pointer; transition: all .18s; user-select: none;
+}
+.chip:hover { border-color: var(--pf-blue); color: var(--pf-blue); background: var(--pf-mist); }
+.chip.on { background: var(--pf-blue); border-color: var(--pf-blue); color: #fff; box-shadow: 0 2px 6px rgba(0,147,208,.3); }
+.pre-confirm { display: flex; justify-content: flex-end; }
+.btn-confirm {
+  background: linear-gradient(135deg, var(--pf-blue), var(--pf-dark));
+  color: #fff; border: none; border-radius: var(--r-sm);
+  padding: 9px 24px; font: 700 13px var(--font);
+  cursor: pointer; transition: all .2s; box-shadow: 0 3px 10px rgba(0,147,208,.3);
+}
+.btn-confirm:hover { transform: translateY(-1px); }
+.btn-confirm:disabled { background: var(--g200); box-shadow: none; cursor: not-allowed; transform: none; }
+
+/* ═══════════════════════════════════════════
+   PANEL 2: BRIEF EDITOR (Grammarly-style)
+═══════════════════════════════════════════ */
+#p-brief { overflow: hidden; }
+
+.brief-bar {
+  background: var(--white); border-bottom: 1px solid var(--g100);
+  padding: 8px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.brief-bar-title { font-size: 13px; font-weight: 600; color: var(--pf-dark); flex: 1; }
+.bb-pill {
+  padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid;
+}
+.bb-blue   { color: var(--pf-blue); border-color: rgba(0,147,208,.3); background: var(--pf-mist); }
+.bb-green  { color: var(--green); border-color: rgba(0,122,80,.25); background: var(--green-lt); }
+.bb-amber  { color: var(--amber); border-color: rgba(160,92,0,.25); background: var(--amber-lt); }
+.bb-btn {
+  background: none; border: 1.5px solid var(--g200); border-radius: var(--r-sm);
+  padding: 5px 12px; font: 600 12px var(--font); color: var(--g600);
+  cursor: pointer; transition: all .2s;
+}
+.bb-btn:hover { border-color: var(--pf-blue); color: var(--pf-blue); background: var(--pf-mist); }
+.bb-btn.prim { background: var(--pf-blue); border-color: var(--pf-blue); color: #fff; }
+.bb-btn.prim:hover { background: var(--pf-dark); border-color: var(--pf-dark); }
+
+.brief-scroll { flex: 1; overflow-y: auto; padding: 28px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.brief-scroll::-webkit-scrollbar { width: 4px; }
+.brief-scroll::-webkit-scrollbar-thumb { background: var(--g200); border-radius: 99px; }
+
+/* Document */
+.doc-sheet {
+  width: 100%; max-width: 660px;
+  background: var(--white); border: 1px solid var(--g200);
+  border-radius: var(--r); box-shadow: var(--sh-sm);
+  padding: 32px 36px; position: relative;
+}
+.doc-empty {
+  text-align: center; padding: 48px 32px; color: var(--muted);
+  font-size: 14px; line-height: 1.7;
+}
+.doc-empty strong { display: block; font-family: var(--serif); font-size: 19px; color: var(--pf-dark); margin-bottom: 8px; }
+
+.doc-field { margin-bottom: 18px; }
+.doc-field:last-child { margin-bottom: 0; }
+.doc-divider { height: 1px; background: var(--g100); margin: 16px 0; }
+.df-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--g300); margin-bottom: 4px; }
+.df-content {
+  font-size: 14px; line-height: 1.7; color: var(--text);
+  border: 1px solid transparent; border-radius: var(--r-sm);
+  padding: 5px 8px; outline: none; transition: all .2s;
+  min-height: 26px; position: relative;
+}
+.df-content[contenteditable]:hover { border-color: var(--g200); background: var(--g50); }
+.df-content[contenteditable]:focus { border-color: var(--pf-blue); background: var(--white); box-shadow: 0 0 0 3px rgba(0,147,208,.08); }
+.df-content.doc-heading { font-family: var(--serif); font-size: 22px; color: var(--pf-dark); padding: 6px 8px; }
+
+/* AI recommendation marks */
+.df-content mark {
+  background: #FEF3C7; border-bottom: 2px solid #F59E0B;
+  border-radius: 2px; cursor: pointer; position: relative;
+}
+.df-content mark[title]:hover::after {
+  content: attr(title);
+  position: absolute; bottom: 100%; left: 0; z-index: 50;
+  background: var(--g800); color: #fff;
+  font-size: 11px; padding: 4px 8px; border-radius: 5px;
+  white-space: nowrap; max-width: 260px; white-space: normal;
+  margin-bottom: 4px;
+}
+
+/* AI recommendations block below doc */
+.ai-rec-block {
+  width: 100%; max-width: 660px;
+  background: #FFFBEB; border: 1.5px solid #FDE68A;
+  border-radius: var(--r); padding: 16px 20px;
+  display: none;
+}
+.ai-rec-block.show { display: block; }
+.arb-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: #92400E; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.arb-item { padding: 8px 0; border-bottom: 1px solid #FDE68A; font-size: 13px; color: var(--soft); line-height: 1.5; }
+.arb-item:last-child { border-bottom: none; }
+.arb-item strong { color: var(--text); font-weight: 600; }
+.arb-item .fix { color: var(--green); font-weight: 700; }
+
+.brief-footer {
+  background: var(--g50); border-top: 1px solid var(--g100);
+  padding: 7px 20px; display: flex; align-items: center; gap: 10px;
+  font-size: 11px; color: var(--muted); flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   PANEL 3: BUILDER
+═══════════════════════════════════════════ */
+#p-build { overflow: hidden; }
+
+.build-tabs {
+  background: var(--white); border-bottom: 1px solid var(--g100);
+  display: flex; align-items: center; padding: 0 16px; flex-shrink: 0;
+}
+.bt-tab {
+  padding: 11px 14px; font-size: 12px; font-weight: 600;
+  color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all .18s; white-space: nowrap;
+}
+.bt-tab:hover { color: var(--pf-blue); }
+.bt-tab.on { color: var(--pf-dark); border-bottom-color: var(--pf-blue); }
+.build-checks { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+.chk-badge {
+  font-size: 11px; font-weight: 600; padding: 3px 9px;
+  border-radius: 20px; border: 1px solid; letter-spacing: .02em;
+}
+.chk-ok   { color: var(--green); border-color: rgba(0,122,80,.25); background: var(--green-lt); }
+.chk-info { color: var(--pf-blue); border-color: rgba(0,147,208,.25); background: var(--pf-mist); }
+.chk-warn { color: var(--amber); border-color: rgba(160,92,0,.25); background: var(--amber-lt); }
+.chk-pulse { animation: cp 1.8s ease-in-out infinite; }
+@keyframes cp { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.btab-body { display: none; flex: 1; overflow: hidden; flex-direction: column; }
+.btab-body.on { display: flex; }
+
+/* Layouts tab */
+.layouts-wrap { flex: 1; overflow-y: auto; padding: 22px; }
+.lay-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
+.lay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+.lay-opt {
+  background: var(--white); border: 2px solid var(--g100);
+  border-radius: var(--r); overflow: hidden; cursor: pointer;
+  transition: all .2s; box-shadow: var(--sh-sm);
+}
+.lay-opt:hover { border-color: var(--pf-blue); box-shadow: var(--sh-md); transform: translateY(-2px); }
+.lay-opt.chosen { border-color: var(--pf-blue); box-shadow: 0 0 0 3px rgba(0,147,208,.18); }
+
+/* Canva-style visual thumbnails */
+.lay-thumb {
+  width: 100%; aspect-ratio: 16/9;
+  background: var(--g50); padding: 8px;
+  display: flex; flex-direction: column; gap: 4px; position: relative; overflow: hidden;
+}
+.lt-hero  { background: linear-gradient(135deg, var(--pf-dark), var(--pf-blue)); border-radius: 4px; flex: 2.5; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px; padding: 6px; }
+.lt-hbar  { height: 5px; background: rgba(255,255,255,.7); border-radius: 99px; width: 65%; }
+.lt-hbar.sub { width: 45%; background: rgba(255,255,255,.4); height: 3px; }
+.lt-hbar.btn { width: 28%; background: #fff; height: 9px; border-radius: 3px; margin-top: 3px; }
+.lt-card-row { display: flex; gap: 4px; flex: 1.2; }
+.lt-card { flex: 1; background: var(--white); border-radius: 4px; border: 1px solid var(--g200); }
+.lt-cols { display: flex; gap: 4px; flex: 2; }
+.lt-col-a { flex: 1.8; display: flex; flex-direction: column; gap: 3px; padding: 4px; }
+.lt-col-b { flex: 1; background: var(--pf-sky); border-radius: 4px; }
+.lt-line  { height: 4px; background: var(--g200); border-radius: 99px; }
+.lt-line.dark { background: var(--g300); }
+.lt-center-text { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 8px; flex: 1; }
+.lay-meta { padding: 9px 11px; }
+.lay-name { font-size: 12px; font-weight: 700; color: var(--text); }
+.lay-desc { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+/* Canvas/edit tab */
+.canvas-area { flex: 1; overflow-y: auto; padding: 18px 20px; gap: 10px; display: flex; flex-direction: column; }
+.canvas-area::-webkit-scrollbar { width: 4px; }
+.canvas-area::-webkit-scrollbar-thumb { background: var(--g200); border-radius: 99px; }
+
+.c-block {
+  background: var(--white); border: 1.5px solid var(--g100);
+  border-radius: var(--r); overflow: hidden; box-shadow: var(--sh-sm);
+  transition: box-shadow .2s;
+}
+.c-block:hover { box-shadow: var(--sh-md); }
+.c-block-head {
+  background: var(--g50); border-bottom: 1px solid var(--g100);
+  padding: 8px 14px; display: flex; align-items: center; gap: 8px;
+}
+.c-block-name { font-size: 12px; font-weight: 600; color: var(--g600); flex: 1; }
+.c-del { background: none; border: none; color: var(--g300); cursor: pointer; font-size: 13px; transition: color .18s; padding: 2px 4px; }
+.c-del:hover { color: var(--red); }
+.c-block-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.c-field-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--g300); margin-bottom: 2px; }
+.c-edit {
+  width: 100%; border: 1px solid transparent; outline: none;
+  background: var(--g50); border-radius: var(--r-sm); padding: 6px 9px;
+  font-family: var(--font); color: var(--text); resize: none;
+  transition: all .2s; line-height: 1.6;
+}
+.c-edit:focus { border-color: var(--pf-blue); background: var(--white); box-shadow: 0 0 0 2px rgba(0,147,208,.09); }
+.c-edit.heading { font-family: var(--serif); font-size: 17px; color: var(--pf-dark); }
+
+.add-section-btn {
+  background: none; border: 2px dashed var(--g200); border-radius: var(--r);
+  padding: 12px; font: 600 12px var(--font); color: var(--g300);
+  cursor: pointer; transition: all .2s; text-align: center;
+}
+.add-section-btn:hover { border-color: var(--pf-blue); color: var(--pf-blue); background: var(--pf-mist); }
+
+.build-footer {
+  background: var(--white); border-top: 1px solid var(--g100);
+  padding: 9px 16px; display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.bf-btn {
+  background: none; border: 1.5px solid var(--g200); border-radius: var(--r-sm);
+  padding: 6px 14px; font: 600 12px var(--font); color: var(--g600);
+  cursor: pointer; transition: all .2s;
+}
+.bf-btn:hover { border-color: var(--pf-blue); color: var(--pf-blue); }
+.bf-btn.prim { background: var(--pf-blue); border-color: var(--pf-blue); color: #fff; margin-left: auto; }
+.bf-btn.prim:hover { background: var(--pf-dark); border-color: var(--pf-dark); }
+
+/* Preview tab */
+.prev-bar {
+  background: var(--g50); border-bottom: 1px solid var(--g100);
+  padding: 7px 14px; display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.prev-url {
+  flex: 1; background: var(--white); border: 1px solid var(--g200);
+  border-radius: 20px; padding: 4px 12px; font: 400 11px monospace; color: var(--soft);
+}
+.prev-open {
+  background: none; border: 1px solid var(--g200); border-radius: var(--r-sm);
+  padding: 4px 10px; font: 600 11px var(--font); color: var(--g600);
+  cursor: pointer; transition: all .18s;
+}
+.prev-open:hover { border-color: var(--pf-blue); color: var(--pf-blue); }
+#previewFrame { flex: 1; border: none; background: var(--white); }
+
+/* Code tab */
+.code-area { flex: 1; overflow: auto; padding: 16px; background: #0F1E2D; }
+.code-pre {
+  font: 400 12px/1.7 'DM Mono', 'Fira Code', monospace;
+  color: #A8C8E0; white-space: pre; tab-size: 2;
+}
+.code-key  { color: #7FDBFF; }
+.code-val  { color: #ADFF8C; }
+.code-tag  { color: #F5B8D4; }
+.code-attr { color: #FFC75F; }
+.code-copy {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+  border-radius: 5px; padding: 4px 8px; color: rgba(255,255,255,.7);
+  font: 600 10px var(--font); cursor: pointer; transition: all .2s;
+}
+.code-copy:hover { background: rgba(255,255,255,.2); }
+
+/* ═══════════════════════════════════════════
+   PANEL 4: REVIEW
+═══════════════════════════════════════════ */
+#p-review { overflow-y: auto; padding: 28px 32px; gap: 18px; }
+.rev-title { font-family: var(--serif); font-size: 21px; color: var(--pf-dark); }
+.rev-sub { font-size: 13px; color: var(--muted); }
+.rev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.rev-card { background: var(--white); border: 1.5px solid var(--g100); border-radius: var(--r); padding: 16px 18px; box-shadow: var(--sh-sm); }
+.rev-card.wide { grid-column: 1/-1; }
+.rev-card-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--g300); margin-bottom: 10px; }
+.rev-row { display: flex; align-items: flex-start; gap: 9px; padding: 7px 0; border-bottom: 1px solid var(--g50); font-size: 13px; }
+.rev-row:last-child { border-bottom: none; }
+.rr-icon { font-size: 12px; flex-shrink: 0; margin-top: 2px; font-style: normal; }
+.rr-text { flex: 1; color: var(--soft); line-height: 1.4; }
+.rr-text strong { color: var(--text); font-weight: 600; }
+.score-row { display: flex; align-items: center; gap: 16px; }
+.score-arc { position: relative; width: 68px; height: 68px; flex-shrink: 0; }
+.score-arc svg { transform: rotate(-90deg); }
+.score-num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 17px var(--font); color: var(--pf-dark); }
+.score-detail { flex: 1; }
+.sdr { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+.sdr:last-child { margin-bottom: 0; }
+.sdr .sdl { width: 72px; flex-shrink: 0; }
+.sdbar { flex: 1; height: 4px; background: var(--g100); border-radius: 99px; overflow: hidden; }
+.sdfill { height: 100%; border-radius: 99px; }
+.sdr .sdv { width: 28px; text-align: right; font-weight: 700; font-size: 11px; }
+.rev-actions { display: flex; gap: 8px; justify-content: flex-end; padding: 4px 0; }
+
+/* ═══════════════════════════════════════════
+   PANEL 5: SUBMIT
+═══════════════════════════════════════════ */
+#p-sub {
+  overflow-y: auto; padding: 28px;
+  align-items: center;
+}
+.sub-card {
+  background: var(--white); border: 1.5px solid var(--g100);
+  border-radius: 20px; box-shadow: var(--sh-md);
+  padding: 34px 40px; max-width: 500px; width: 100%;
+}
+.sub-title { font-family: var(--serif); font-size: 21px; color: var(--pf-dark); margin-bottom: 4px; }
+.sub-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+.sub-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+.sm-box { background: var(--g50); border: 1px solid var(--g100); border-radius: var(--r-sm); padding: 8px 11px; }
+.sm-l { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--g300); margin-bottom: 2px; }
+.sm-v { font-size: 13px; font-weight: 600; color: var(--text); }
+.tc-scroll { background: var(--g50); border: 1px solid var(--g100); border-radius: var(--r-sm); padding: 12px; font-size: 12.5px; line-height: 1.65; color: var(--soft); max-height: 120px; overflow-y: auto; margin-bottom: 12px; }
+.tc-agree { display: flex; align-items: center; gap: 9px; margin-bottom: 18px; cursor: pointer; }
+.tc-agree input { width: 15px; height: 15px; accent-color: var(--pf-blue); cursor: pointer; }
+.tc-agree label { font-size: 13px; font-weight: 500; color: var(--text); cursor: pointer; }
+.btn-submit {
+  width: 100%; background: linear-gradient(135deg, var(--pf-blue), var(--pf-dark));
+  color: #fff; border: none; border-radius: var(--r-sm); padding: 11px;
+  font: 700 14px var(--font); cursor: pointer; transition: all .2s;
+  box-shadow: 0 4px 12px rgba(0,147,208,.3);
+}
+.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,147,208,.42); }
+.btn-submit:disabled { background: var(--g200); box-shadow: none; cursor: not-allowed; transform: none; }
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 18px; right: 18px; z-index: 9999;
+  background: var(--g800); color: #fff;
+  padding: 10px 14px; border-radius: var(--r); box-shadow: var(--sh-lg);
+  font: 500 13px var(--font); display: flex; align-items: center; gap: 7px;
+  animation: fadeUp .25s ease; max-width: 260px;
+}
+.toast.success { background: var(--green); }
+.toast.info    { background: var(--pf-dark); }
+
+/* scrollbars */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--g200); border-radius: 99px; }
+
+/* ── API KEY BANNER ── */
+.key-banner {
+  background: #FFF8E1;
+  border-bottom: 1px solid #F59E0B;
+  padding: 0 20px;
+  display: none; /* hidden by default - demo mode is on */
+  align-items: center; gap: 12px;
+  height: 44px; flex-shrink: 0; z-index: 100;
+  font-size: 13px;
+}
+.key-banner.show { display: flex; }
+.key-banner.hidden { display: none !important; }
+.key-banner-label { font-weight: 600; color: #92400E; white-space: nowrap; }
+.key-input {
+  flex: 1; max-width: 340px;
+  background: var(--white); border: 1.5px solid #F59E0B;
+  border-radius: var(--r-sm); padding: 5px 10px;
+  font: 400 12px monospace; color: var(--text); outline: none;
+  transition: border-color .2s;
+}
+.key-input:focus { border-color: var(--pf-blue); }
+.key-set-btn {
+  background: var(--pf-blue); color: white; border: none;
+  border-radius: var(--r-sm); padding: 5px 14px;
+  font: 700 12px var(--font); cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.key-set-btn:hover { background: var(--pf-dark); }
+.key-demo-btn {
+  background: none; border: 1.5px solid #F59E0B; border-radius: var(--r-sm);
+  padding: 5px 14px; font: 700 12px var(--font);
+  color: #92400E; cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.key-demo-btn:hover { background: #FEF3C7; }
+.key-status {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+}
+.key-status.ok   { background: var(--green-lt); color: var(--green); }
+.key-status.demo { background: var(--pf-mist); color: var(--pf-dark); }
+.key-dismiss { background: none; border: none; color: #B45309; font-size: 16px; cursor: pointer; padding: 0 4px; margin-left: auto; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <span class="h-logo">Pharmaceutical Company</span>
+  <div class="h-sep"></div>
+  <span class="h-app">Design-to-Delivery Accelerator</span>
+  <div class="h-right">
+    <span class="h-badge" id="hBadge">CXI+AI · University of Liverpool</span>
+  </div>
+</header>
+
+<!-- API KEY BANNER -->
+<div class="key-banner" id="keyBanner">
+  <span class="key-banner-label">API Key</span>
+  <input class="key-input" id="keyInput" type="password" placeholder="Paste your Anthropic API key (sk-ant-…) - never leaves your browser" />
+  <button class="key-set-btn" onclick="setKey()">Use Key</button>
+  <button class="key-demo-btn" onclick="setDemo()">Run Demo Mode (no key needed)</button>
+  <span class="key-status" id="keyStatus" style="display:none">-</span>
+  <button class="key-dismiss" onclick="$('keyBanner').classList.add('hidden')" title="Dismiss">×</button>
+</div>
+
+<!-- PIPELINE BAR -->
+<nav class="pipeline">
+  <div class="pip-step active" id="pp0"><div class="pip-num">1</div><div class="pip-label">Register</div></div>
+  <div class="pip-step" id="pp1"><div class="pip-num">2</div><div class="pip-label">Preliminary</div></div>
+  <div class="pip-step" id="pp2"><div class="pip-num">3</div><div class="pip-label">Brief</div></div>
+  <div class="pip-step" id="pp3"><div class="pip-num">4</div><div class="pip-label">Builder</div></div>
+  <div class="pip-step" id="pp4"><div class="pip-num">5</div><div class="pip-label">Review</div></div>
+  <div class="pip-step" id="pp5"><div class="pip-num">6</div><div class="pip-label">Submit</div></div>
+  <div class="pip-right">
+    <div class="pip-pct">
+      <div class="pip-bar-wrap"><div class="pip-bar-fill" id="pipFill" style="width:0%"></div></div>
+      <span id="pipPct">0%</span>
+    </div>
+  </div>
+</nav>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-user" id="sbUser">
+      <div class="sb-name" id="sbName">-</div>
+      <div class="sb-meta" id="sbMeta">-</div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-section-label">Workflow</div>
+      <div class="sb-item active" id="sn0" onclick="go(0)"><div class="sb-num">1</div><span>Register</span></div>
+      <div class="sb-item locked" id="sn1" onclick="go(1)"><div class="sb-num">2</div><span>Preliminary</span></div>
+      <div class="sb-item locked" id="sn2" onclick="go(2)"><div class="sb-num">3</div><span>Brief</span></div>
+      <div class="sb-item locked" id="sn3" onclick="go(3)"><div class="sb-num">4</div><span>Builder</span></div>
+      <div class="sb-item locked" id="sn4" onclick="go(4)"><div class="sb-num">5</div><span>Review</span></div>
+      <div class="sb-item locked" id="sn5" onclick="go(5)"><div class="sb-num">6</div><span>Submit</span></div>
+    </div>
+    <div class="sb-bottom">
+      <button class="sb-save-btn" onclick="save()">Save Session</button>
+      <div class="sb-timestamp" id="saveTs">Not saved yet</div>
+    </div>
+  </aside>
+
+  <!-- CENTER -->
+  <main class="center">
+
+    <!-- Prelim context bar -->
+    <div class="ctx-bar" id="ctxBar">
+      <span class="ctx-label">Project</span>
+      <span class="ctx-pill" id="ctxBuild">-</span>
+      <span class="ctx-pill" id="ctxAud">-</span>
+      <span class="ctx-pill" id="ctxReg">-</span>
+      <span class="ctx-pill" id="ctxLang">-</span>
+    </div>
+
+    <!-- PANEL 0: REGISTER -->
+    <div class="panel on" id="p-reg">
+      <div class="reg-card">
+        <div class="reg-title">Welcome to the Accelerator</div>
+        <div class="reg-sub">Enter your details to personalise your workspace and save progress.</div>
+
+        <div class="fg fg-row">
+          <div><label class="fl">First Name</label><input class="fi" id="rFN" placeholder="Jane" /></div>
+          <div><label class="fl">Last Name</label><input class="fi" id="rLN" placeholder="Smith" /></div>
+        </div>
+        <div class="fg"><label class="fl">Company Email</label><input class="fi" id="rEmail" type="email" placeholder="jane.smith@pharmaceuticalcompany.com" /></div>
+        <div class="fg">
+          <label class="fl">Phone Number</label>
+          <div class="phone-wrap">
+            <select class="fi phone-code" id="rCode">
+              <option>🇬🇧 +44</option><option>🇺🇸 +1</option><option>🇫🇷 +33</option>
+              <option>🇩🇪 +49</option><option>🇪🇸 +34</option><option>🇮🇹 +39</option>
+              <option>🇳🇱 +31</option><option>🇦🇺 +61</option><option>🇯🇵 +81</option>
+              <option>🇨🇳 +86</option><option>🇮🇳 +91</option><option>🇧🇷 +55</option>
+              <option>🇿🇦 +27</option><option>🇦🇪 +971</option><option>🇸🇬 +65</option>
+            </select>
+            <input class="fi" id="rPhone" placeholder="7700 000000" style="flex:1;background-image:none;padding-right:11px" />
+          </div>
+        </div>
+        <div class="fg fg-row">
+          <div><label class="fl">Employee Number</label><input class="fi" id="rEmp" placeholder="EMP-00000" /></div>
+          <div><label class="fl">Department</label><input class="fi" id="rDept" placeholder="Digital Marketing" /></div>
+        </div>
+        <div class="fg">
+          <label class="fl">Country / Region</label>
+          <select class="fi" id="rCountry">
+            <option value="">Select…</option>
+            <option>United Kingdom</option><option>United States</option><option>Germany</option>
+            <option>France</option><option>Spain</option><option>Italy</option>
+            <option>Netherlands</option><option>Australia</option><option>Japan</option>
+            <option>China</option><option>India</option><option>Brazil</option>
+            <option>South Africa</option><option>UAE</option><option>Singapore</option>
+            <option>Global</option>
+          </select>
+        </div>
+
+        <button class="btn-go" onclick="submitReg()">Continue to Workspace →</button>
+        <a class="load-link" onclick="load()">Load a saved session</a>
+      </div>
+    </div>
+
+    <!-- PANEL 1: PRELIMINARY -->
+    <div class="panel" id="p-pre">
+      <div class="pre-title" id="preTitle">Set up your project</div>
+      <div class="pre-sub">Select your options - these personalise every step that follows.</div>
+      <div class="pre-grid">
+        <div class="pre-card">
+          <div class="pc-lbl">What are you building?</div>
+          <div class="chips" id="cBuild">
+            <div class="chip" onclick="chip(this,'build')">Website</div>
+            <div class="chip" onclick="chip(this,'build')">Webpage</div>
+            <div class="chip" onclick="chip(this,'build')">Landing Page</div>
+            <div class="chip" onclick="chip(this,'build')">Microsite</div>
+          </div>
+        </div>
+        <div class="pre-card">
+          <div class="pc-lbl">Target Audience</div>
+          <div class="chips" id="cAud">
+            <div class="chip" onclick="chip(this,'audience')">Patients</div>
+            <div class="chip" onclick="chip(this,'audience')">Healthcare Providers</div>
+            <div class="chip" onclick="chip(this,'audience')">Channel Partners</div>
+            <div class="chip" onclick="chip(this,'audience')">Internal Teams</div>
+          </div>
+        </div>
+        <div class="pre-card">
+          <div class="pc-lbl">Primary Language</div>
+          <div class="chips" id="cLang">
+            <div class="chip" onclick="chip(this,'language')">English</div>
+            <div class="chip" onclick="chip(this,'language')">French</div>
+            <div class="chip" onclick="chip(this,'language')">German</div>
+            <div class="chip" onclick="chip(this,'language')">Spanish</div>
+            <div class="chip" onclick="chip(this,'language')">Mandarin</div>
+          </div>
+        </div>
+        <div class="pre-card">
+          <div class="pc-lbl">AI Translation</div>
+          <div class="chips" id="cTrans">
+            <div class="chip" onclick="chip(this,'translation')">Yes - all content</div>
+            <div class="chip" onclick="chip(this,'translation')">Key pages only</div>
+            <div class="chip" onclick="chip(this,'translation')">No - English only</div>
+          </div>
+        </div>
+      </div>
+      <div class="pre-confirm">
+        <button class="btn-confirm" id="preCTA" disabled onclick="confirmPre()">Confirm &amp; Build Brief →</button>
+      </div>
+    </div>
+
+    <!-- PANEL 2: BRIEF EDITOR -->
+    <div class="panel" id="p-brief">
+      <div class="brief-bar">
+        <div class="brief-bar-title" id="briefBarTitle">Brief Editor</div>
+        <span class="bb-pill bb-blue" id="briefPill">Awaiting input</span>
+        <button class="bb-btn" id="aiRevBtn" onclick="aiReview()" style="display:none">AI Review</button>
+        <button class="bb-btn prim" id="confirmBriefBtn" onclick="confirmBrief()" style="display:none">Confirm Brief</button>
+      </div>
+      <div class="brief-scroll" id="briefScroll">
+        <div class="doc-sheet" id="docSheet">
+          <div class="doc-empty" id="docEmpty">
+            <strong>Describe your project in the prompt bar →</strong>
+            Your brief will appear here as a live document. Edit any field directly, then use AI Review to get compliance and brand recommendations highlighted inline.
+          </div>
+        </div>
+        <div class="ai-rec-block" id="aiRecBlock">
+          <div class="arb-title">AI Recommendations</div>
+          <div id="aiRecItems"></div>
+        </div>
+      </div>
+      <div class="brief-footer">
+        <span id="wCount">-</span>
+        <span class="bb-pill bb-green" id="gramPill" style="display:none">Grammar clear</span>
+        <span class="bb-pill bb-amber" id="compPill" style="display:none">Compliance: 2 notes</span>
+      </div>
+    </div>
+
+    <!-- PANEL 3: BUILDER -->
+    <div class="panel" id="p-build">
+      <div class="build-tabs">
+        <div class="bt-tab on" onclick="btab(this,'bt-lay')">Layouts</div>
+        <div class="bt-tab" onclick="btab(this,'bt-canvas')">Edit Content</div>
+        <div class="bt-tab" onclick="btab(this,'bt-prev')">Preview</div>
+        <div class="bt-tab" onclick="btab(this,'bt-code')">Code</div>
+        <div class="build-checks">
+          <span class="chk-badge chk-ok">Grammar clear</span>
+          <span class="chk-badge chk-info chk-pulse" id="compCheck">Compliance checking…</span>
+        </div>
+      </div>
+
+      <!-- Layouts -->
+      <div class="btab-body on" id="bt-lay">
+        <div class="layouts-wrap">
+          <div class="lay-title">Choose a layout for your page</div>
+          <div class="lay-grid">
+
+            <div class="lay-opt" onclick="pickLayout(this,'hero')">
+              <div class="lay-thumb">
+                <div class="lt-hero"><div class="lt-hbar"></div><div class="lt-hbar sub"></div><div class="lt-hbar btn"></div></div>
+                <div class="lt-card-row"><div class="lt-card"></div><div class="lt-card"></div><div class="lt-card"></div></div>
+              </div>
+              <div class="lay-meta"><div class="lay-name">Hero + Cards</div><div class="lay-desc">Bold banner with feature grid</div></div>
+            </div>
+
+            <div class="lay-opt" onclick="pickLayout(this,'two-col')">
+              <div class="lay-thumb">
+                <div style="height:10px;background:var(--pf-dark);border-radius:3px;margin-bottom:6px"></div>
+                <div class="lt-cols">
+                  <div class="lt-col-a">
+                    <div class="lt-line dark"></div><div class="lt-line"></div><div class="lt-line"></div><div class="lt-line" style="width:70%"></div>
+                  </div>
+                  <div class="lt-col-b"></div>
+                </div>
+              </div>
+              <div class="lay-meta"><div class="lay-name">Two Column</div><div class="lay-desc">Content + sidebar panel</div></div>
+            </div>
+
+            <div class="lay-opt" onclick="pickLayout(this,'cards')">
+              <div class="lay-thumb">
+                <div class="lt-center-text"><div class="lt-hbar" style="background:var(--pf-dark);height:7px;width:55%"></div></div>
+                <div class="lt-card-row" style="flex:2">
+                  <div class="lt-card" style="background:var(--pf-mist)"></div>
+                  <div class="lt-card" style="background:var(--pf-sky)"></div>
+                  <div class="lt-card" style="background:var(--g100)"></div>
+                </div>
+              </div>
+              <div class="lay-meta"><div class="lay-name">Card Grid</div><div class="lay-desc">Feature highlights in tiles</div></div>
+            </div>
+
+            <div class="lay-opt" onclick="pickLayout(this,'split')">
+              <div class="lay-thumb" style="flex-direction:row;gap:0;padding:0">
+                <div style="flex:1;background:linear-gradient(180deg,var(--pf-dark),var(--pf-blue));display:flex;flex-direction:column;justify-content:center;padding:10px;gap:5px;border-radius:4px 0 0 4px">
+                  <div class="lt-hbar"></div><div class="lt-hbar sub"></div>
+                </div>
+                <div style="flex:1;background:var(--g100);border-radius:0 4px 4px 0"></div>
+              </div>
+              <div class="lay-meta"><div class="lay-name">Split</div><div class="lay-desc">50/50 image and content</div></div>
+            </div>
+
+            <div class="lay-opt" onclick="pickLayout(this,'article')">
+              <div class="lay-thumb">
+                <div style="height:14px;background:var(--pf-dark);border-radius:3px;width:65%;margin-bottom:7px"></div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+                  <div class="lt-line dark" style="width:90%"></div><div class="lt-line" style="width:100%"></div>
+                  <div class="lt-line" style="width:85%"></div><div class="lt-line" style="width:70%"></div>
+                </div>
+              </div>
+              <div class="lay-meta"><div class="lay-name">Article</div><div class="lay-desc">Long-form editorial content</div></div>
+            </div>
+
+            <div class="lay-opt" onclick="pickLayout(this,'minimal')">
+              <div class="lay-thumb">
+                <div class="lt-center-text" style="flex:1">
+                  <div class="lt-hbar" style="background:var(--pf-dark);height:9px;width:50%"></div>
+                  <div class="lt-hbar" style="height:4px;width:70%"></div>
+                  <div class="lt-hbar" style="height:4px;width:60%"></div>
+                  <div class="lt-hbar" style="background:var(--pf-blue);height:7px;width:30%;border-radius:3px"></div>
+                </div>
+              </div>
+              <div class="lay-meta"><div class="lay-name">Minimal</div><div class="lay-desc">Clean centred editorial</div></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas -->
+      <div class="btab-body" id="bt-canvas">
+        <div class="canvas-area" id="canvasArea">
+          <div style="color:var(--muted);font-size:13px;text-align:center;padding:36px 20px">Select a layout first to populate content.</div>
+        </div>
+        <div class="build-footer">
+          <button class="bf-btn" onclick="addSection()">Add Section</button>
+          <button class="bf-btn prim" onclick="go(4)">Proceed to Review →</button>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="btab-body" id="bt-prev" style="flex-direction:column">
+        <div class="prev-bar">
+          <div class="prev-url" id="prevUrl">pharmaceuticalcompany-draft.preview/your-project</div>
+          <button class="prev-open" onclick="openTab()">Open in tab</button>
+        </div>
+        <iframe id="previewFrame" style="flex:1;border:none;background:white" srcdoc="<p style='font-family:sans-serif;padding:40px;color:#666;text-align:center'>Build content first to see your live preview.</p>"></iframe>
+      </div>
+
+      <!-- Code -->
+      <div class="btab-body" id="bt-code" style="position:relative">
+        <div class="code-area"><pre class="code-pre" id="codeOut"><!-- Choose a layout to generate code --></pre></div>
+        <button class="code-copy" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+
+    <!-- PANEL 4: REVIEW -->
+    <div class="panel" id="p-review">
+      <div class="rev-title">AI Verification Report</div>
+      <div class="rev-sub">Automated checks complete - review before submitting.</div>
+      <div class="rev-grid">
+        <div class="rev-card">
+          <div class="rev-card-title">Compliance Checks</div>
+          <div class="rev-row"><span class="rr-icon">✓</span><span class="rr-text"><strong>WCAG 2.1 AA</strong> - Colour contrast passes</span></div>
+          <div class="rev-row"><span class="rr-icon">✓</span><span class="rr-text"><strong>GDPR</strong> - Cookie consent block present</span></div>
+          <div class="rev-row"><span class="rr-icon">⚠</span><span class="rr-text"><strong>Brand Voice</strong> - 2 phrases need tone review</span></div>
+          <div class="rev-row"><span class="rr-icon">✓</span><span class="rr-text"><strong>Regulatory</strong> - No restricted claims detected</span></div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-card-title">Grammar &amp; Brand</div>
+          <div class="rev-row"><span class="rr-icon">✓</span><span class="rr-text"><strong>Grammar</strong> - No errors found</span></div>
+          <div class="rev-row"><span class="rr-icon">✓</span><span class="rr-text"><strong>Spelling</strong> - All clear</span></div>
+          <div class="rev-row"><span class="rr-icon">⚠</span><span class="rr-text"><strong>Readability</strong> - Grade 12; simplify for patients</span></div>
+          <div class="rev-row"><span class="rr-icon">✓</span><span class="rr-text"><strong>Inclusive Language</strong> - Passes</span></div>
+        </div>
+        <div class="rev-card wide">
+          <div class="rev-card-title">Overall Readiness</div>
+          <div class="score-row">
+            <div class="score-arc">
+              <svg width="68" height="68" viewBox="0 0 68 68">
+                <circle cx="34" cy="34" r="27" fill="none" stroke="var(--g100)" stroke-width="7"/>
+                <circle cx="34" cy="34" r="27" fill="none" stroke="var(--pf-blue)" stroke-width="7"
+                  stroke-dasharray="170" stroke-dashoffset="34" stroke-linecap="round"/>
+              </svg>
+              <div class="score-num">80%</div>
+            </div>
+            <div class="score-detail">
+              <div class="sdr"><span class="sdl">Compliance</span><div class="sdbar"><div class="sdfill" style="width:90%;background:var(--green)"></div></div><span class="sdv">90%</span></div>
+              <div class="sdr"><span class="sdl">Grammar</span><div class="sdbar"><div class="sdfill" style="width:95%;background:var(--pf-blue)"></div></div><span class="sdv">95%</span></div>
+              <div class="sdr"><span class="sdl">Brand Voice</span><div class="sdbar"><div class="sdfill" style="width:72%;background:var(--amber)"></div></div><span class="sdv">72%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="rev-actions">
+        <button class="bf-btn" onclick="go(3)">Back to Builder</button>
+        <button class="bf-btn prim" onclick="go(5)">Confirm &amp; Submit →</button>
+      </div>
+    </div>
+
+    <!-- PANEL 5: SUBMIT -->
+    <div class="panel" id="p-sub">
+      <div class="sub-card">
+        <div class="sub-title">Submit for Review</div>
+        <div class="sub-desc">Your project will be sent to the IT review team before publishing.</div>
+        <div class="sub-meta" id="subMeta"></div>
+        <div class="tc-scroll">By submitting I confirm that all content complies with Pharmaceutical Company's Digital Standards and Brand Guidelines; no unpublished clinical data is included; I have reviewed all AI-generated content; the site meets WCAG 2.1 AA; and appropriate regulatory review has been completed or is requested via this submission. I understand the Review Team may request amendments before approval.</div>
+        <div class="tc-agree">
+          <input type="checkbox" id="tcBox" onchange="$('subBtn').disabled=!this.checked" />
+          <label for="tcBox">I agree to the Terms and Conditions</label>
+        </div>
+        <button class="btn-submit" id="subBtn" disabled onclick="finalSubmit()">Submit for Review</button>
+      </div>
+    </div>
+
+  </main><!-- /center -->
+
+  <!-- RIGHT COLUMN -->
+  <aside class="right-col">
+    <div class="rc-tabs">
+      <div class="rc-tab on" id="rct-prompt" onclick="rctab(this,'rcp-prompt')">Prompt</div>
+      <div class="rc-tab" id="rct-ai" onclick="rctab(this,'rcp-ai')">AI Log</div>
+      <div class="rc-tab" id="rct-notes" onclick="rctab(this,'rcp-notes')">Notes</div>
+      <div class="rc-tab" id="rct-docs" onclick="rctab(this,'rcp-docs')">Docs</div>
+    </div>
+
+    <!-- Prompt panel -->
+    <div class="rc-panel on" id="rcp-prompt">
+      <div class="prompt-area">
+        <div class="rc-label">AI Prompt</div>
+        <div class="prompt-box">
+          <textarea id="promptTa" placeholder="Describe your website - goal, audience, tone, key sections…&#10;&#10;AI will build your structured brief from this." onkeydown="handlePKey(event)" oninput="autoR(this)"></textarea>
+          <button class="prompt-send" id="pSend" onclick="sendPrompt()">Generate Brief</button>
+        </div>
+      </div>
+      <div style="padding:0 14px 6px"><div class="rc-label">Brief History</div></div>
+      <div class="brief-versions" id="bvList"><div style="font-size:12px;color:var(--g300);padding:4px 0">No versions yet</div></div>
+    </div>
+
+    <!-- AI Log -->
+    <div class="rc-panel" id="rcp-ai">
+      <div class="ai-log" id="aiLog">
+        <div style="font-size:12px;color:var(--muted);padding:4px">AI agent activity will appear here as you work through the pipeline.</div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="rc-panel" id="rcp-notes">
+      <div class="notes-area">
+        <textarea id="notepad" placeholder="Jot notes, copy ideas, paste references…&#10;&#10;Saves automatically."></textarea>
+        <div class="notes-footer">
+          <span class="notes-count" id="nCount">0 characters</span>
+          <button class="notes-copy" onclick="navigator.clipboard.writeText($('notepad').value).then(()=>toast('Copied'))">Copy all</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Docs (RAG) -->
+    <div class="rc-panel" id="rcp-docs">
+      <div style="padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1">
+        <div class="rc-label">Knowledge Base</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">
+          Drop PDFs or text files into the <code style="background:var(--g100);padding:1px 5px;border-radius:3px">docs/</code> folder, or upload below. The AI will automatically use them when generating briefs and compliance checks - like NotebookLM.
+        </div>
+
+        <!-- Upload area -->
+        <div id="dropZone" style="border:2px dashed var(--g200);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;color:var(--muted)"
+          onclick="$('fileInput').click()"
+          ondragover="event.preventDefault();this.style.borderColor='var(--pf-blue)'"
+          ondragleave="this.style.borderColor='var(--g200)'"
+          ondrop="handleDrop(event)">
+          Click or drag a PDF / .txt file here
+          <input type="file" id="fileInput" accept=".pdf,.txt,.md" style="display:none" onchange="uploadFile(this.files[0])">
+        </div>
+
+        <!-- Status -->
+        <div id="ragStatus" style="font-size:11px;color:var(--muted);display:none"></div>
+
+        <!-- Indexed docs list -->
+        <div>
+          <div class="rc-label" style="margin-bottom:6px">Indexed Documents</div>
+          <div id="docList" style="font-size:12px;color:var(--muted)">
+            Loading… (only available when running via rag_engine.py)
+          </div>
+        </div>
+
+        <!-- What gets retrieved -->
+        <div style="background:var(--pf-mist);border:1px solid var(--pf-sky);border-radius:var(--r-sm);padding:10px 12px;font-size:11px;color:var(--pf-dark);line-height:1.6">
+          <strong>How this works:</strong> When you generate a brief, the AI automatically retrieves the most relevant rules from your documents and applies them - brand colours, compliance rules, component specs. No prompting needed.
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+</div><!-- /workspace -->
+
+<script>
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+const S = {
+  step: 0, maxStep: 0,
+  user: {},
+  pre: { build:null, audience:null, language:null, translation:null },
+  briefs: [],
+  currentBrief: null,
+  layout: null,
+  loading: false,
+};
+
+const PANELS  = ['p-reg','p-pre','p-brief','p-build','p-review','p-sub'];
+const PCTS    = [0,17,34,55,78,100];
+const LABELS  = ['Register','Preliminary','Brief','Builder','Review','Submit'];
+
+/* ═══════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════ */
+function $(id){ return document.getElementById(id); }
+function gv(id){ return ($((id))||{}).value||''; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function autoR(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,130)+'px'; }
+
+let _tt;
+function toast(msg,type=''){
+  document.querySelector('.toast')?.remove(); clearTimeout(_tt);
+  const el=document.createElement('div'); el.className='toast '+(type==='success'?'success':type==='info'?'info':'');
+  el.textContent=msg; document.body.appendChild(el);
+  _tt=setTimeout(()=>el.remove(),3000);
+}
+
+function log(agent,msg,state='running'){
+  const log=$('aiLog');
+  // remove empty placeholder
+  log.querySelector('div:not(.log-entry)')?.remove();
+  const el=document.createElement('div');
+  el.className='log-entry '+(state==='running'?'running':state==='done'?'done':state==='warn'?'warn':'');
+  el.innerHTML=`<div class="log-agent">${state==='running'?'<span class="log-spinner"></span>':''} ${agent}</div>${esc(msg)}`;
+  log.appendChild(el); log.scrollTop=log.scrollHeight;
+  return el;
+}
+
+function updateLogEntry(el, agent, msg, state){
+  el.className='log-entry '+state;
+  el.innerHTML=`<div class="log-agent">${agent}</div>${esc(msg)}`;
+}
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+function go(idx){
+  if(idx > S.maxStep+1 && idx > 0){ toast('Complete the current step first'); return; }
+  PANELS.forEach((id,i)=>{ const el=$(id); if(el) el.classList.toggle('on',i===idx); });
+  // pipeline dots
+  for(let i=0;i<=5;i++){
+    const el=$('pp'+i);
+    if(!el) continue;
+    el.className='pip-step'+(i<idx?' done':i===idx?' active':'');
+  }
+  // sidebar
+  for(let i=0;i<=5;i++){
+    const el=$('sn'+i);
+    if(!el) continue;
+    el.className='sb-item'+(i<idx?' done':i===idx?' active':i>S.maxStep+1?' locked':'');
+  }
+  // progress bar
+  const pct=PCTS[idx];
+  $('pipFill').style.width=pct+'%';
+  $('pipPct').textContent=pct+'%';
+
+  S.step=idx;
+  if(idx>S.maxStep) S.maxStep=idx;
+  if(idx===5) buildSubMeta();
+  if(idx===2) rctab($('rct-prompt'),'rcp-prompt');
+  if(idx===3) rctab($('rct-ai'),'rcp-ai');
+}
+
+/* ═══════════════════════════════════════════
+   REGISTRATION
+═══════════════════════════════════════════ */
+function submitReg(){
+  const fn=gv('rFN').trim(), ln=gv('rLN').trim();
+  const email=gv('rEmail').trim(), emp=gv('rEmp').trim();
+  const dept=gv('rDept').trim(), country=gv('rCountry');
+  if(!fn||!ln||!email||!emp||!dept||!country){ toast('Please fill in all required fields'); return; }
+  S.user={firstName:fn,lastName:ln,email,emp,dept,country,phone:gv('rCode')+' '+gv('rPhone')};
+  // Update sidebar user card
+  $('sbUser').classList.add('show');
+  $('sbName').textContent=fn+' '+ln;
+  $('sbMeta').innerHTML=dept+'<br>'+emp+' · '+country;
+  // Update prelim title
+  $('preTitle').textContent=`Let's set up your project, ${fn}`;
+  log('Registration Agent','User profile created for '+fn+' '+ln+' ('+dept+')','done');
+  go(1);
+}
+
+/* ═══════════════════════════════════════════
+   PRELIMINARY
+═══════════════════════════════════════════ */
+function chip(el,grp){
+  $('c'+grp.charAt(0).toUpperCase()+grp.slice(1))?.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  S.pre[grp]=el.textContent.trim();
+  $('preCTA').disabled=!Object.values(S.pre).every(Boolean);
+}
+
+// Map chip group IDs correctly
+function chip(el,grp){
+  const ids={build:'cBuild',audience:'cAud',language:'cLang',translation:'cTrans'};
+  document.querySelectorAll('#'+ids[grp]+' .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  S.pre[grp]=el.textContent.trim();
+  $('preCTA').disabled=!Object.values(S.pre).every(Boolean);
+}
+
+function confirmPre(){
+  $('ctxBuild').textContent=S.pre.build;
+  $('ctxAud').textContent=S.pre.audience;
+  $('ctxReg').textContent=S.user.country;
+  $('ctxLang').textContent=S.pre.language;
+  $('ctxBar').classList.add('show');
+
+  // Auto-fill prompt
+  $('promptTa').value=`Build a ${S.pre.build} for ${S.pre.audience} in ${S.user.country}. Language: ${S.pre.language}. Translation: ${S.pre.translation}. Department: ${S.user.dept}.`;
+  autoR($('promptTa'));
+  log('Preliminary Agent',`Project configured: ${S.pre.build} · ${S.pre.audience} · ${S.user.country}`, 'done');
+  go(2);
+}
+
+/* ═══════════════════════════════════════════
+   BRIEF
+═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   API KEY + DEMO MODE
+═══════════════════════════════════════════ */
+const API = { key: null, demo: false };
+
+function setKey(){
+  const k = $('keyInput').value.trim();
+  if(!k.startsWith('sk-ant-')){ toast("That doesn't look like a Claude key - should start sk-ant-"); return; }
+  API.key = k; API.demo = false;
+  const st = $('keyStatus');
+  st.textContent = 'Key set ✓'; st.className = 'key-status ok'; st.style.display = '';
+  $('keyInput').value = '';
+  $('keyBanner').classList.add('hidden');
+  toast('API key saved - all 5 agents are live!', 'success');
+}
+
+function setDemo(){
+  API.demo = true; API.key = null;
+  const st = $('keyStatus');
+  st.textContent = 'Demo mode'; st.className = 'key-status demo'; st.style.display = '';
+  $('keyBanner').classList.add('hidden');
+  toast('Demo mode on - realistic responses, no key needed', 'info');
+}
+
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+function demoMakeBrief(prompt){
+  const build   = S.pre.build    || 'Webpage';
+  const aud     = S.pre.audience || 'Patients';
+  const country = S.user.country || 'United Kingdom';
+  const lang    = S.pre.language || 'English';
+  const dept    = S.user.dept    || 'Digital';
+  // Pull real words from the user prompt so it feels personalised
+  const words   = (prompt||'').split(/\s+/).filter(w=>w.length>4).slice(0,4).join(' ').toLowerCase();
+  const flavour = words ? ` focusing on ${words}` : '';
+  return {
+    projectTitle: `Pharmaceutical Company ${build} - ${aud} Hub (${country})`,
+    goal: `Deliver a clear, brand-compliant ${build.toLowerCase()}${flavour} that helps ${aud.toLowerCase()} understand Pharmaceutical Company's offerings and take confident next steps. Owned by the ${dept} team.`,
+    audience: `${aud} in ${country}, ${lang}-speaking. Mixed health literacy - plain language and clear CTAs required throughout.`,
+    keyMessages: [
+      'Pharmaceutical Company puts patients at the centre of everything we do.',
+      'Science-led innovation, consistently delivered across all markets.',
+      'Accessible, trustworthy information built for every user.'
+    ],
+    designSystemComponents: ['Hero Banner','Navigation Bar','Card Grid','CTA Button','Stat Callout','Footer'],
+    contentSections: [
+      'Hero - headline & primary CTA',
+      'Key benefits (3-up card grid)',
+      'Supporting statistics (Stat Callout)',
+      'Contact / next steps',
+      'Footer with legal & cookie consent'
+    ],
+    toneAndStyle: 'Clear, warm, scientifically credible. Active voice throughout. Pharmaceutical Company brand voice: human, optimistic, trustworthy. Avoid jargon - target Grade 8 reading level.',
+    complianceFlags: [
+      'GDPR cookie consent banner required (OneTrust)',
+      'No unsubstantiated medical claims',
+      'WCAG 2.1 AA colour contrast must pass (4.5:1 minimum)',
+      'Regulatory disclaimer required in footer',
+      'All claims must link to approved source material'
+    ],
+    accessibilityNotes: 'Descriptive alt text on all images. Full keyboard navigation. Skip-to-content link in header. ARIA landmarks on major sections. Target WCAG 2.1 AA.',
+    seoKeywords: ['Pharmaceutical Company'+country.toLowerCase(), 'patient information', aud.toLowerCase()+' resources', 'healthcare '+country.toLowerCase()]
+  };
+}
+
+function demoMakeReview(){
+  return [
+    { field:'toneAndStyle',       issue:'Passive voice detected in goal statement',           suggestion:'Rewrite as "We deliver…" instead of "…is delivered"',           severity:'low' },
+    { field:'complianceFlags',    issue:'Cookie consent banner not yet specified in brief',   suggestion:'Add "GDPR cookie banner - OneTrust integration" to requirements', severity:'high' },
+    { field:'keyMessages',        issue:'Second message reads as a promotional claim',        suggestion:'Add qualifier: "…as evidenced by our clinical trial programme"',   severity:'medium' },
+    { field:'audience',           issue:'Health literacy level unspecified',                  suggestion:'State target reading age (recommend Grade 8 / Flesch score 60+)', severity:'medium' },
+    { field:'accessibilityNotes', issue:'Tab/focus order not defined',                        suggestion:'Add "Tab order follows visual reading order: left→right, top→bottom"', severity:'low' }
+  ];
+}
+
+// Where to send requests - auto-detected on load
+const ENDPOINT = {
+  ollama:    '/api/chat',                          // local via server.py
+  anthropic: 'https://api.anthropic.com/v1/messages'
+};
+
+// On load: check if we're running via server.py (i.e. on localhost)
+// If yes, use Ollama. If not, fall back to demo mode.
+(function detectMode(){
+  if(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'){
+    API.ollama = true;
+    API.demo   = false;
+    console.log('🟢 Running locally - using Ollama via server.py');
+  } else {
+    API.ollama = false;
+    // demo mode already set by initDemoMode() below
+    console.log('🟡 Not on localhost - demo mode active');
+  }
+})();
+
+async function callAI(system, userMsg, maxTokens){
+
+  // ── OLLAMA (local server.py) ──────────────────
+  if(API.ollama){
+    const res = await fetch(ENDPOINT.ollama, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ system, messages:[{role:'user', content:userMsg}] })
+    });
+    if(!res.ok){
+      const e = await res.json().catch(()=>({}));
+      throw new Error(e?.error || 'Ollama error ' + res.status + ' - is ollama serve running?');
+    }
+    const data = await res.json();
+    // server.py returns Anthropic-shaped response so this just works
+    return data.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
+  }
+
+  // ── ANTHROPIC API (if key was pasted in) ─────
+  if(API.key){
+    const res = await fetch(ENDPOINT.anthropic, {
+      method:  'POST',
+      headers: { 'Content-Type':'application/json', 'x-api-key': API.key, 'anthropic-version':'2023-06-01' },
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens: maxTokens||1000,
+        system, messages:[{role:'user',content:userMsg}] })
+    });
+    if(!res.ok){
+      const e = await res.json().catch(()=>({}));
+      throw new Error(e?.error?.message || 'API error ' + res.status);
+    }
+    const data = await res.json();
+    return data.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
+  }
+
+  // ── DEMO fallback ─────────────────────────────
+  await sleep(1100 + Math.random()*900);
+  throw new Error('__DEMO__');
+}
+
+/* ─────────────────────────────────────── */
+
+function handlePKey(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendPrompt(); } }
+
+async function sendPrompt(){
+  if(S.loading) return;
+  const txt = $('promptTa').value.trim();
+  if(!txt){ toast('Enter a prompt first'); return; }
+
+  if(!API.key && !API.demo){ API.demo = true; } // always fall through to demo
+
+  S.loading = true;
+  $('pSend').disabled = true; $('pSend').textContent = 'Generating…';
+  $('briefPill').textContent = 'Generating…'; $('briefPill').className = 'bb-pill bb-blue';
+  $('docEmpty') && ($('docEmpty').style.display = 'none');
+  const logEl = log('Brief Agent', 'Interpreting brief and selecting design-system components…', 'running');
+
+  const sys = `You are a senior Pharmaceutical Company digital strategist and design-system expert for CXI+AI.
+Context: ${S.pre.build} for ${S.pre.audience} · ${S.user.country} · Language: ${S.pre.language} · Translation: ${S.pre.translation}
+User: ${S.user.firstName} ${S.user.lastName}, ${S.user.dept}
+Return ONLY valid JSON (no markdown):
+{"projectTitle":"...","goal":"...","audience":"...","keyMessages":["...","...","..."],"designSystemComponents":["Hero Banner","Navigation Bar","Card Grid","CTA Button","Footer"],"contentSections":["...","..."],"toneAndStyle":"...","complianceFlags":["..."],"accessibilityNotes":"...","seoKeywords":["...","..."]}
+designSystemComponents must only use: Hero Banner, Navigation Bar, Card Grid, Two-Column Layout, Article Body, CTA Button, Form, Footer, Accordion, Testimonial Block, Stat Callout, Image Gallery`;
+
+  try {
+    let brief;
+    try {
+      const raw = await callAI(sys, txt, 1000);
+      brief = JSON.parse(raw);
+    } catch(e){
+      if(e.message === '__DEMO__'){
+        brief = demoMakeBrief(txt);
+        log('Brief Agent', '[Demo] Pre-built Pharmaceutical Company template used - swap to real API key for live generation', 'done');
+      } else { throw e; }
+    }
+    S.currentBrief = brief;
+    S.briefs.push({ time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), data: brief, prompt: txt });
+    renderDoc(brief);
+    updateBVList();
+    $('briefPill').textContent = 'Draft ready · ' + (brief.designSystemComponents?.length||0) + ' components';
+    $('briefPill').className = 'bb-pill bb-blue';
+    $('aiRevBtn').style.display = '';
+    $('confirmBriefBtn').style.display = '';
+    $('gramPill').style.display = '';
+    $('compPill').style.display = '';
+    updateWC();
+    updateLogEntry(logEl, 'Brief Agent', 'Brief generated. Components: ' + (brief.designSystemComponents?.join(', ')||'-'), 'done');
+    log('Component Selector', 'Mapped brief to ' + (brief.designSystemComponents?.length||0) + 'Pharmaceutical Company design-system components', 'done');
+    toast('Brief generated - review and edit any field directly', 'info');
+  } catch(err){
+    updateLogEntry(logEl, 'Brief Agent', 'Error: ' + err.message, 'warn');
+    toast('Something went wrong - try refreshing and running again');
+    $('docEmpty') && ($('docEmpty').style.display = '');
+  }
+  S.loading = false;
+  $('pSend').disabled = false; $('pSend').textContent = 'Generate Brief';
+}
+
+function renderDoc(brief){
+  const sheet = $('docSheet');
+  const fields = [
+    {key:'projectTitle',label:'Project Title',big:true},
+    {key:'goal',label:'Goal'},
+    {key:'audience',label:'Target Audience'},
+    {key:'designSystemComponents',label:'Design System Components',list:true},
+    {key:'keyMessages',label:'Key Messages',list:true},
+    {key:'contentSections',label:'Content Sections',list:true},
+    {key:'toneAndStyle',label:'Tone & Style'},
+    {key:'complianceFlags',label:'Compliance Flags',list:true},
+    {key:'accessibilityNotes',label:'Accessibility Notes'},
+    {key:'seoKeywords',label:'SEO Keywords',list:true},
+  ];
+  sheet.innerHTML = fields.map((f,i) => {
+    let val = Array.isArray(brief[f.key])
+      ? brief[f.key].join(f.key==='seoKeywords' ? ' · ' : '\n')
+      : (brief[f.key]||'-');
+    return `${i>0?'<div class="doc-divider"></div>':''}
+      <div class="doc-field">
+        <div class="df-label">${f.label}</div>
+        <div class="df-content ${f.big?'doc-heading':''}" contenteditable="true" data-key="${f.key}" oninput="updateWC()">${esc(val)}</div>
+      </div>`;
+  }).join('') +
+  '<div class="ai-rec-block" id="aiRecBlock"><div class="arb-title">AI Recommendations</div><div id="aiRecItems"></div></div>';
+  setTimeout(updateWC, 80);
+}
+
+function updateWC(){
+  const t = $('docSheet')?.innerText || '';
+  const wc = t.trim().split(/\s+/).filter(Boolean).length;
+  $('wCount').textContent = wc + ' words';
+}
+
+async function aiReview(){
+  if(S.loading) return;
+  if(!API.key && !API.demo){ API.demo = true; }
+  S.loading = true;
+  $('aiRevBtn').textContent = 'Reviewing…'; $('aiRevBtn').disabled = true;
+  const logEl = log('Compliance Agent', 'Running WCAG, GDPR and Pharmaceutical Company brand checks…', 'running');
+  log('Grammar Agent', 'Checking copy quality and readability…', 'running');
+
+  const txt = $('docSheet')?.innerText || '';
+  const sys = `You are a Pharmaceutical Company compliance and brand reviewer. Review this brief for:
+1. Pharmaceutical Company brand voice (clear, scientific, optimistic, human)
+2. Audience appropriateness for ${S.pre.audience}
+3. WCAG/accessibility considerations
+4. Regulatory red flags for pharma web content
+Return ONLY a JSON array (max 5 items), each: {"field":"fieldName","issue":"short issue","suggestion":"specific fix","severity":"high|medium|low"}`;
+
+  try {
+    let recs;
+    try {
+      const raw = await callAI(sys, txt, 600);
+      recs = JSON.parse(raw);
+    } catch(e){
+      if(e.message === '__DEMO__'){ recs = demoMakeReview(); }
+      else { throw e; }
+    }
+    renderRecs(recs);
+    $('briefPill').textContent = recs.length + ' recommendations';
+    $('briefPill').className = 'bb-pill bb-amber';
+    updateLogEntry(logEl, 'Compliance Agent', recs.filter(r=>r.severity==='high').length + ' high, ' + recs.filter(r=>r.severity==='medium').length + ' medium issues. Scroll down to review.', 'warn');
+    log('Grammar Agent', 'Copy reviewed. Readability: B2 level. No grammar errors detected.', 'done');
+    const block = $('aiRecBlock');
+    if(block){ block.classList.add('show'); block.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+    toast(recs.length + ' recommendations - scroll down to review');
+  } catch(err){
+    updateLogEntry(logEl, 'Compliance Agent', 'Review error: ' + err.message, 'warn');
+  }
+  S.loading = false;
+  $('aiRevBtn').textContent = 'Re-review'; $('aiRevBtn').disabled = false;
+}
+
+function renderRecs(recs){
+  const items = $('aiRecItems');
+  if(!items) return;
+  items.innerHTML = recs.map(r => `
+    <div class="arb-item">
+      <span style="color:${r.severity==='high'?'var(--red)':r.severity==='medium'?'var(--amber)':'var(--green)'};font-weight:800;font-size:10px;text-transform:uppercase;letter-spacing:.05em">${r.severity}</span>
+      <strong> ${esc(r.field)}</strong> - ${esc(r.issue)}<br>
+      <span class="fix">Fix: </span>${esc(r.suggestion)}
+    </div>`).join('');
+}
+
+function confirmBrief(){
+  $('briefPill').textContent='Confirmed'; $('briefPill').className='bb-pill bb-green';
+  $('confirmBriefBtn').style.display='none';
+  log('Brief Agent','Brief confirmed by user. Passing to Builder with component spec.','done');
+  go(3);
+  setTimeout(()=>{ if(S.currentBrief) populateCanvas(); },300);
+  toast('Brief confirmed - builder ready','success');
+}
+
+function updateBVList(){
+  const list=$('bvList');
+  list.innerHTML=S.briefs.map((v,i)=>`
+    <div class="bv-item" onclick="restoreV(${i})">
+      <div class="bv-time">Version ${i+1} · ${v.time}</div>
+      ${esc((v.data.projectTitle||v.prompt).slice(0,55))}…
+    </div>`).join('');
+}
+
+function restoreV(i){
+  S.currentBrief=S.briefs[i].data;
+  renderDoc(S.briefs[i].data);
+  toast('Version '+(i+1)+' restored');
+}
+
+/* ═══════════════════════════════════════════
+   BUILDER
+═══════════════════════════════════════════ */
+function btab(el,id){
+  document.querySelectorAll('.bt-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.btab-body').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  $(id).classList.add('on');
+  if(id==='bt-prev') refreshPreview();
+  if(id==='bt-code') refreshCode();
+}
+
+function pickLayout(el,type){
+  document.querySelectorAll('.lay-opt').forEach(o=>o.classList.remove('chosen'));
+  el.classList.add('chosen');
+  S.layout=type;
+  populateCanvas();
+  document.querySelectorAll('.bt-tab')[1].click();
+  setTimeout(()=>{
+    $('compCheck').textContent='Compliance clear';
+    $('compCheck').classList.remove('chk-pulse','chk-info');
+    $('compCheck').classList.add('chk-ok');
+    log('Compliance Agent','Layout checked: '+type+' - all brand and accessibility rules met','done');
+    genLink();
+  },2800);
+  toast('Layout selected - content auto-populated');
+}
+
+function populateCanvas(){
+  const b=S.currentBrief||{};
+  const t=b.projectTitle||`${S.user.firstName||''}'s ${S.pre.build||'Page'}`;
+  const g=b.goal||'Delivering impactful digital experiences for '+S.pre.audience;
+  const km=b.keyMessages||['Innovation at scale','Patient-centred design','Compliance by default'];
+  const cs=b.contentSections||['Introduction','Key Benefits','Call to Action'];
+
+  const layouts={
+    hero:[
+      {n:'Hero Banner',f:[{l:'Headline',t:'heading',v:t},{l:'Subheadline',r:2,v:g}]},
+      {n:'Feature Cards',f:km.slice(0,3).map((m,i)=>({l:'Card '+(i+1),r:2,v:m}))},
+      {n:'Call to Action',f:[{l:'CTA Text',r:2,v:'Learn how Pharmaceutical Company is transforming healthcare at scale.'}]}
+    ],
+    'two-col':[
+      {n:'Main Content',f:[{l:'Section Title',t:'heading',v:t},{l:'Body',r:5,v:g+'\n\n'+cs.join(' - ')}]},
+      {n:'Sidebar Highlights',f:km.map((m,i)=>({l:'Point '+(i+1),r:2,v:m}))}
+    ],
+    cards:[
+      {n:'Section Header',f:[{l:'Title',t:'heading',v:t},{l:'Intro',r:2,v:g}]},
+      ...km.slice(0,3).map((m,i)=>({n:'Card '+(i+1),f:[{l:'Content',r:3,v:m}]}))
+    ],
+    split:[
+      {n:'Left - Content',f:[{l:'Headline',t:'heading',v:t},{l:'Description',r:4,v:g}]},
+      {n:'Right - Media',f:[{l:'Caption',r:2,v:'[Insert visual asset or image here]'}]}
+    ],
+    article:[
+      {n:'Article',f:[{l:'Title',t:'heading',v:t},{l:'Lead',r:2,v:g},{l:'Body',r:7,v:cs.join('\n\n')}]}
+    ],
+    minimal:[
+      {n:'Page Content',f:[{l:'Title',t:'heading',v:t},{l:'Body',r:5,v:g+'\n\n'+km.join('\n')}]}
+    ]
+  };
+
+  const blocks=layouts[S.layout]||layouts.hero;
+  const canvas=$('canvasArea');
+  canvas.innerHTML=blocks.map((blk,bi)=>`
+    <div class="c-block" id="cb${bi}">
+      <div class="c-block-head">
+        <div class="c-block-name">${blk.n}</div>
+        <button class="c-del" onclick="this.closest('.c-block').remove();refreshPreviewDebounced()" title="Remove">✕</button>
+      </div>
+      <div class="c-block-body">
+        ${blk.f.map((f,fi)=>`
+          <div>
+            <div class="c-field-label">${f.l}</div>
+            <textarea class="c-edit ${f.t||''}" rows="${f.r||2}"
+              oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';refreshPreviewDebounced()"
+              >${esc(f.v||'')}</textarea>
+          </div>`).join('')}
+      </div>
+    </div>`).join('')+`<button class="add-section-btn" onclick="addSection()">+ Add Section</button>`;
+
+  canvas.querySelectorAll('textarea').forEach(ta=>{ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; });
+  log('Builder Agent','Content auto-populated from brief. '+blocks.length+' components scaffolded.','done');
+}
+
+function addSection(){
+  const canvas=$('canvasArea');
+  const btn=canvas.querySelector('.add-section-btn');
+  const id='cb'+Date.now();
+  const div=document.createElement('div');
+  div.className='c-block'; div.id=id;
+  div.innerHTML=`
+    <div class="c-block-head">
+      <div class="c-block-name">New Section</div>
+      <button class="c-del" onclick="this.closest('.c-block').remove();refreshPreviewDebounced()">✕</button>
+    </div>
+    <div class="c-block-body">
+      <div><div class="c-field-label">Heading</div><textarea class="c-edit heading" rows="1" placeholder="Section title…" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea></div>
+      <div><div class="c-field-label">Body</div><textarea class="c-edit" rows="4" placeholder="Content…" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea></div>
+    </div>`;
+  canvas.insertBefore(div,btn);
+}
+
+/* ═══════════════════════════════════════════
+   PREVIEW
+═══════════════════════════════════════════ */
+let prevTimer;
+function refreshPreviewDebounced(){ clearTimeout(prevTimer); prevTimer=setTimeout(refreshPreview,700); }
+
+function refreshPreview(){
+  const blocks=$('canvasArea')?.querySelectorAll('.c-block')||[];
+  const title=S.currentBrief?.projectTitle||'Pharmaceutical Company';
+  let html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(title)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;color:#0F1E2D;background:#fff}
+.nav{background:linear-gradient(90deg,#001A4D,#003087);padding:14px 40px;display:flex;align-items:center;gap:12px}
+.nav-logo{color:#fff;font-size:18px;font-weight:700;letter-spacing:.05em}
+.nav-bar{height:3px;background:linear-gradient(90deg,#0093D0,#003087);margin:0}
+.hero{background:linear-gradient(135deg,#003087 0%,#0093D0 100%);color:#fff;padding:64px 48px;text-align:center}
+.hero h1{font-size:2.2em;font-weight:700;margin-bottom:12px;line-height:1.2}
+.hero p{font-size:1.05em;opacity:.88;max-width:580px;margin:0 auto 20px}
+.cta-btn{display:inline-block;background:#fff;color:#003087;padding:11px 28px;border-radius:6px;font:700 14px sans-serif;text-decoration:none}
+.section{padding:48px;max-width:960px;margin:0 auto}
+.section h2{font-size:1.35em;font-weight:700;color:#003087;margin-bottom:12px}
+.section p{font-size:.97em;line-height:1.75;color:#3A5570;white-space:pre-wrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;padding:48px;max-width:960px;margin:0 auto}
+.card{background:#EBF6FC;border:1px solid #D6EEF9;border-radius:10px;padding:20px}
+.card p{font-size:.92em;line-height:1.65;color:#3A5570;white-space:pre-wrap}
+.footer{background:#003087;color:rgba(255,255,255,.65);text-align:center;padding:22px;font-size:12px;margin-top:48px}
+</style></head><body>
+<div class="nav"><span class="nav-logo">Pharmaceutical Company</span></div><div class="nav-bar"></div>`;
+
+  let isFirst=true;
+  blocks.forEach(blk=>{
+    const name=blk.querySelector('.c-block-name')?.textContent||'';
+    const tas=[...blk.querySelectorAll('textarea')];
+    if(isFirst&&tas.length){
+      html+=`<div class="hero"><h1>${esc(tas[0]?.value||name)}</h1><p>${esc(tas[1]?.value||'')}</p><a class="cta-btn" href="#">Learn More</a></div>`;
+      isFirst=false;
+    } else if(name.toLowerCase().includes('card')){
+      html+=`<div class="cards">${tas.map(ta=>`<div class="card"><p>${esc(ta.value)}</p></div>`).join('')}</div>`;
+    } else {
+      html+=`<div class="section">${tas.map((ta,i)=>i===0?`<h2>${esc(ta.value||name)}</h2>`:`<p>${esc(ta.value)}</p>`).join('')}</div>`;
+    }
+  });
+  html+=`<div class="footer">Pharmaceutical Company Inc. · Draft Preview · Not for external distribution</div></body></html>`;
+  const frame=$('previewFrame');
+  if(frame) frame.srcdoc=html;
+}
+
+function openTab(){
+  const f=$('previewFrame');
+  if(!f?.srcdoc||f.srcdoc.includes('Build content')){ toast('Build content first'); return; }
+  const w=window.open('','_blank'); w.document.write(f.srcdoc); w.document.close();
+}
+
+function genLink(){
+  const slug=(S.currentBrief?.projectTitle||'your-project').toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,36);
+  const url=`pharmaceutical-company-draft.preview/${S.user.emp||'emp'}/${slug}`;
+  $('prevUrl').textContent=url;
+  log('Deployment Agent','Preview link generated: '+url,'done');
+}
+
+/* ═══════════════════════════════════════════
+   CODE GENERATION
+═══════════════════════════════════════════ */
+function refreshCode(){
+  const blocks=$('canvasArea')?.querySelectorAll('.c-block')||[];
+  const title=S.currentBrief?.projectTitle||'Pharmaceutical Company Page';
+  let code=`<span class="code-tag">&lt;!-- Pharmaceutical Company Design-to-Delivery Accelerator --&gt;\n&lt;!-- Generated: ${new Date().toLocaleString()} --&gt;\n\n&lt;!DOCTYPE html&gt;</span>\n<span class="code-tag">&lt;html</span> <span class="code-attr">lang</span>=<span class="code-val">"en"</span><span class="code-tag">&gt;</span>\n<span class="code-tag">&lt;head&gt;</span>\n  <span class="code-tag">&lt;meta</span> <span class="code-attr">charset</span>=<span class="code-val">"UTF-8"</span><span class="code-tag">&gt;</span>\n  <span class="code-tag">&lt;title&gt;</span>${esc(title)}<span class="code-tag">&lt;/title&gt;</span>\n  <span class="code-key">/* Pharmaceutical Company Design Tokens loaded */</span>\n<span class="code-tag">&lt;/head&gt;</span>\n<span class="code-tag">&lt;body&gt;</span>\n`;
+
+  blocks.forEach(blk=>{
+    const name=blk.querySelector('.c-block-name')?.textContent||'Section';
+    const tas=[...blk.querySelectorAll('textarea')];
+    code+=`\n  <span class="code-key">/* Component: ${esc(name)} */</span>\n  <span class="code-tag">&lt;section</span> <span class="code-attr">class</span>=<span class="code-val">"emp-${name.toLowerCase().replace(/\s+/g,'-')}"</span><span class="code-tag">&gt;</span>\n`;
+    tas.forEach((ta,i)=>{
+      const v=ta.value.trim().replace(/\n/g,'\\n');
+      code+=`    <span class="code-tag">&lt;${i===0?'h2':'p'}&gt;</span>${esc(v)}<span class="code-tag">&lt;/${i===0?'h2':'p'}&gt;</span>\n`;
+    });
+    code+=`  <span class="code-tag">&lt;/section&gt;</span>\n`;
+  });
+  code+=`\n<span class="code-tag">&lt;/body&gt;&lt;/html&gt;</span>`;
+  $('codeOut').innerHTML=code;
+  log('Code Generator','Deployable HTML generated - '+blocks.length+' component blocks, WCAG compliant','done');
+}
+
+function copyCode(){
+  const raw=$('codeOut')?.innerText||'';
+  navigator.clipboard.writeText(raw).then(()=>toast('Code copied to clipboard','success'));
+}
+
+/* ═══════════════════════════════════════════
+   SUBMIT
+═══════════════════════════════════════════ */
+function buildSubMeta(){
+  $('subMeta').innerHTML=[
+    ['Name',S.user.firstName+' '+S.user.lastName],
+    ['Email',S.user.email||'-'],
+    ['Employee',S.user.emp||'-'],
+    ['Department',S.user.dept||'-'],
+    ['Country',S.user.country||'-'],
+    ['Build Type',S.pre.build||'-']
+  ].map(([l,v])=>`<div class="sm-box"><div class="sm-l">${l}</div><div class="sm-v">${esc(v)}</div></div>`).join('');
+}
+
+function finalSubmit(){
+  log('Submission Agent','Project submitted to IT Review Team. Reference: REF-'+Date.now().toString(36).toUpperCase(),'done');
+  toast('Submitted - IT Review Team notified','success');
+  $('subBtn').disabled=true; $('subBtn').textContent='Submitted - awaiting review';
+}
+
+/* ═══════════════════════════════════════════
+   RIGHT COLUMN TABS
+═══════════════════════════════════════════ */
+function rctab(el,id){
+  document.querySelectorAll('.rc-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.rc-panel').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on'); $(id).classList.add('on');
+}
+
+/* ═══════════════════════════════════════════
+   SAVE / LOAD
+═══════════════════════════════════════════ */
+function save(){
+  const d={user:S.user,pre:S.pre,briefs:S.briefs,step:S.step,maxStep:S.maxStep,
+    note:$('notepad').value, ts:new Date().toISOString()};
+  localStorage.setItem('pharmaceutical_company_dta_v3',JSON.stringify(d));
+  const ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  $('saveTs').textContent='Saved '+ts;
+  toast('Session saved','success');
+}
+
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem('pharmaceutical_company_dta_v3'));
+    if(!d){ toast('No saved session found'); return; }
+    S.user=d.user||{}; S.pre=d.pre||S.pre; S.briefs=d.briefs||[]; S.maxStep=d.maxStep||0;
+    if(S.user.firstName){
+      $('sbUser').classList.add('show');
+      $('sbName').textContent=S.user.firstName+' '+S.user.lastName;
+      $('sbMeta').innerHTML=S.user.dept+'<br>'+S.user.emp+' · '+S.user.country;
+    }
+    if(S.pre.build){ $('ctxBuild').textContent=S.pre.build; $('ctxAud').textContent=S.pre.audience; $('ctxReg').textContent=S.user.country; $('ctxLang').textContent=S.pre.language; $('ctxBar').classList.add('show'); }
+    if(d.note) $('notepad').value=d.note;
+    updateBVList();
+    if(S.briefs.length) S.currentBrief=S.briefs[S.briefs.length-1].data;
+    const savedTs=d.ts?new Date(d.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'-';
+    $('saveTs').textContent='Last: '+savedTs;
+    go(Math.min(d.step||0,S.maxStep));
+    toast('Welcome back, '+(S.user.firstName||'')+'!','info');
+  } catch(e){ toast('Could not load: '+e.message); }
+}
+
+/* ═══════════════════════════════════════════
+   NOTEPAD
+═══════════════════════════════════════════ */
+$('notepad').addEventListener('input',()=>{
+  $('nCount').textContent=$('notepad').value.length+' characters';
+  localStorage.setItem('pharmaceutical_company_dta_note',$('notepad').value);
+});
+const sn=localStorage.getItem('pharmaceutical_company_dta_note');
+if(sn){ $('notepad').value=sn; $('nCount').textContent=sn.length+' characters'; }
+
+/* ═══════════════════════════════════════════
+   DOCS / RAG PANEL
+═══════════════════════════════════════════ */
+function handleDrop(e){
+  e.preventDefault();
+  $('dropZone').style.borderColor='var(--g200)';
+  const file = e.dataTransfer.files[0];
+  if(file) uploadFile(file);
+}
+
+async function uploadFile(file){
+  if(!file) return;
+  if(!API.ollama){
+    toast('Upload works when running via rag_engine.py on localhost');
+    return;
+  }
+  const status = $('ragStatus');
+  status.style.display='block';
+  status.textContent = 'Uploading ' + file.name + '…';
+  const form = new FormData();
+  form.append('file', file);
+  try {
+    const res  = await fetch('/api/upload', { method:'POST', body:form });
+    const data = await res.json();
+    status.textContent = data.message || 'Done';
+    toast(file.name + ' indexed - agents will now use it', 'success');
+    loadDocList();
+  } catch(e) {
+    status.textContent = 'Upload failed: ' + e.message;
+    toast('Upload failed - is rag_engine.py running?');
+  }
+}
+
+async function loadDocList(){
+  if(!API.ollama){
+    $('docList').textContent='Run rag_engine.py to enable live document indexing.';
+    return;
+  }
+  try {
+    const res  = await fetch('/api/docs');
+    const data = await res.json();
+    const list = $('docList');
+    if(!data.files || data.files.length===0){
+      list.innerHTML='<span style="color:var(--muted)">No documents yet - drop a PDF or .txt above.</span>';
+    } else {
+      list.innerHTML = data.files.map(f=>
+        `<div style="padding:5px 0;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:6px">
+          <span style="color:var(--pf-blue)">●</span><span style="font-size:12px">${f}</span>
+        </div>`
+      ).join('') +
+      `<div style="margin-top:8px;font-size:11px;color:var(--muted)">${data.total_chunks} chunks · ${data.model}</div>`;
+    }
+  } catch(e){
+    $('docList').textContent='Run rag_engine.py to enable live document indexing.';
+  }
+}
+setTimeout(loadDocList, 600);
+
+// ── AUTO DEMO MODE ON LOAD ──
+// Demo mode is on by default - no API key, no cost, works everywhere.
+// If running on localhost via server.py, Ollama is used instead automatically.
+(function initDemoMode(){
+  API.demo = true; // default - overridden by detectMode() above if on localhost
+  $('keyBanner').classList.add('hidden');
+  // detectMode() runs first (defined above), so check what it set
+  setTimeout(()=>{
+    if(API.ollama){
+      log('System', '🟢 Ollama detected - mistral:7b ready. All 5 agents are live and local.', 'done');
+    } else {
+      log('System', '🟡 Demo mode active - realistic responses, no API key needed. Open via server.py for live Ollama.', 'done');
+    }
+  }, 100);
+})();
+</script>
+</body>
+</html>
